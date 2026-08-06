@@ -1,0 +1,243 @@
+import { isValid, parseISO } from 'date-fns';
+
+import {
+  EVENT_CATEGORIES,
+  RESOURCE_KINDS,
+  type Announcement,
+  type BoardMember,
+  type EventCategory,
+  type EventItem,
+  type Resource,
+  type ResourceKind,
+  type YouthItem,
+} from '@/types';
+
+/**
+ * Runtime parsing and validation — the "edge" of the data layer.
+ *
+ * Everything entering the app passes through here, whether it came from a
+ * bundled JSON file or (later) a Firestore document. A raw JSON import is
+ * typed as loosely as `string` where the domain wants `'cultural' | 'social'`,
+ * so a cast alone would be a lie; these parsers actually check.
+ *
+ * Failures throw rather than silently coercing. Bad content should surface
+ * loudly in development, not render as a blank row in production. When
+ * Firestore arrives, a malformed document fails in exactly this same place.
+ */
+
+export class ContentParseError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ContentParseError';
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Primitive readers
+ * ------------------------------------------------------------------ */
+
+const asRecord = (value: unknown, context: string): Record<string, unknown> => {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    throw new ContentParseError(`${context}: expected an object.`);
+  }
+  return value as Record<string, unknown>;
+};
+
+const readString = (
+  source: Record<string, unknown>,
+  key: string,
+  context: string,
+): string => {
+  const value = source[key];
+  if (typeof value !== 'string' || value.length === 0) {
+    throw new ContentParseError(`${context}: "${key}" must be a non-empty string.`);
+  }
+  return value;
+};
+
+/**
+ * Reads `string | null`. A missing key is treated as `null` so a backend that
+ * omits empty fields (Firestore does) parses the same as one that writes an
+ * explicit null (our JSON does).
+ */
+const readNullableString = (
+  source: Record<string, unknown>,
+  key: string,
+  context: string,
+): string | null => {
+  const value = source[key];
+  if (value === null || value === undefined) {
+    return null;
+  }
+  if (typeof value !== 'string') {
+    throw new ContentParseError(`${context}: "${key}" must be a string or null.`);
+  }
+  return value;
+};
+
+const readBoolean = (
+  source: Record<string, unknown>,
+  key: string,
+  context: string,
+): boolean => {
+  const value = source[key];
+  if (typeof value !== 'boolean') {
+    throw new ContentParseError(`${context}: "${key}" must be a boolean.`);
+  }
+  return value;
+};
+
+const readNumber = (
+  source: Record<string, unknown>,
+  key: string,
+  context: string,
+): number => {
+  const value = source[key];
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    throw new ContentParseError(`${context}: "${key}" must be a finite number.`);
+  }
+  return value;
+};
+
+/**
+ * Reads an ISO-8601 date string and proves it actually parses.
+ *
+ * The value is returned as the original string, not a `Date` — domain types
+ * carry ISO strings end to end. This validates without converting.
+ */
+const readISODate = (
+  source: Record<string, unknown>,
+  key: string,
+  context: string,
+): string => {
+  const value = readString(source, key, context);
+  if (!isValid(parseISO(value))) {
+    throw new ContentParseError(
+      `${context}: "${key}" must be an ISO-8601 date, received "${value}".`,
+    );
+  }
+  return value;
+};
+
+const readNullableISODate = (
+  source: Record<string, unknown>,
+  key: string,
+  context: string,
+): string | null => {
+  const value = readNullableString(source, key, context);
+  if (value === null) {
+    return null;
+  }
+  if (!isValid(parseISO(value))) {
+    throw new ContentParseError(
+      `${context}: "${key}" must be an ISO-8601 date or null, received "${value}".`,
+    );
+  }
+  return value;
+};
+
+/** Narrows a string to one of a fixed set of literals. */
+const readUnion = <T extends string>(
+  source: Record<string, unknown>,
+  key: string,
+  allowed: readonly T[],
+  context: string,
+): T => {
+  const value = readString(source, key, context);
+  const match = allowed.find((candidate) => candidate === value);
+  if (match === undefined) {
+    throw new ContentParseError(
+      `${context}: "${key}" must be one of ${allowed.join(' | ')}, received "${value}".`,
+    );
+  }
+  return match;
+};
+
+/* ------------------------------------------------------------------ *
+ * Domain parsers
+ * ------------------------------------------------------------------ */
+
+export const parseEventItem = (input: unknown, index: number): EventItem => {
+  const context = `events[${index}]`;
+  const raw = asRecord(input, context);
+
+  return {
+    id: readString(raw, 'id', context),
+    title: readString(raw, 'title', context),
+    startDate: readISODate(raw, 'startDate', context),
+    endDate: readNullableISODate(raw, 'endDate', context),
+    allDay: readBoolean(raw, 'allDay', context),
+    startTime: readNullableString(raw, 'startTime', context),
+    endTime: readNullableString(raw, 'endTime', context),
+    location: readNullableString(raw, 'location', context),
+    description: readNullableString(raw, 'description', context),
+    heroImage: readNullableString(raw, 'heroImage', context),
+    sourceUrl: readString(raw, 'sourceUrl', context),
+    isFeatured: readBoolean(raw, 'isFeatured', context),
+    category: readUnion<EventCategory>(raw, 'category', EVENT_CATEGORIES, context),
+  };
+};
+
+export const parseBoardMember = (input: unknown, index: number): BoardMember => {
+  const context = `board[${index}]`;
+  const raw = asRecord(input, context);
+
+  return {
+    id: readString(raw, 'id', context),
+    name: readString(raw, 'name', context),
+    role: readString(raw, 'role', context),
+    roleOrder: readNumber(raw, 'roleOrder', context),
+    photo: readNullableString(raw, 'photo', context),
+    email: readNullableString(raw, 'email', context),
+    bio: readNullableString(raw, 'bio', context),
+  };
+};
+
+export const parseAnnouncement = (input: unknown, index: number): Announcement => {
+  const context = `announcements[${index}]`;
+  const raw = asRecord(input, context);
+
+  return {
+    id: readString(raw, 'id', context),
+    title: readString(raw, 'title', context),
+    body: readString(raw, 'body', context),
+    date: readISODate(raw, 'date', context),
+    linkUrl: readNullableString(raw, 'linkUrl', context),
+    pinned: readBoolean(raw, 'pinned', context),
+  };
+};
+
+export const parseYouthItem = (input: unknown, index: number): YouthItem => {
+  const context = `youth[${index}]`;
+  const raw = asRecord(input, context);
+
+  return {
+    id: readString(raw, 'id', context),
+    title: readString(raw, 'title', context),
+    body: readNullableString(raw, 'body', context),
+  };
+};
+
+export const parseResource = (input: unknown, index: number): Resource => {
+  const context = `resources[${index}]`;
+  const raw = asRecord(input, context);
+
+  return {
+    id: readString(raw, 'id', context),
+    label: readString(raw, 'label', context),
+    url: readString(raw, 'url', context),
+    kind: readUnion<ResourceKind>(raw, 'kind', RESOURCE_KINDS, context),
+  };
+};
+
+/** Applies an item parser across an array from an untrusted source. */
+export const parseCollection = <T>(
+  input: unknown,
+  parseItem: (item: unknown, index: number) => T,
+  context: string,
+): T[] => {
+  if (!Array.isArray(input)) {
+    throw new ContentParseError(`${context}: expected an array.`);
+  }
+  return input.map(parseItem);
+};
