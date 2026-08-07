@@ -11,7 +11,8 @@
     "backgroundColor": "#FAF6EF",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "org.sfvga.app"
+      "bundleIdentifier": "org.sfvga.app",
+      "icon": "./assets/icon.png"
     },
     "android": {
       "package": "org.sfvga.app",
@@ -35,7 +36,7 @@
         "expo-splash-screen",
         {
           "image": "./assets/splash-icon.png",
-          "imageWidth": 180,
+          "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#FAF6EF"
         }

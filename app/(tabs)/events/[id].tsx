@@ -7,8 +7,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EventHero } from '@/components/events/EventHero';
 import { FlagshipHeroOrnament } from '@/components/events/FlagshipHeroOrnament';
+import { HeroSlideshow } from '@/components/events/HeroSlideshow';
 import { Tag } from '@/components/events/Tag';
 import { Rule } from '@/components/ui/Rule';
+import { SANSKRITI_DANCE_IMAGES } from '@/constants/assets';
 import {
   CATEGORY_LABELS,
   EVENTS_COPY,
@@ -121,6 +123,9 @@ export default function EventDetailScreen() {
   const status = getEventStatus(event);
   const statusLabel = STATUS_LABELS[status];
 
+  // The slideshow belongs to the flagship alone, and only while it has frames.
+  const showSlideshow = event.isFeatured && SANSKRITI_DANCE_IMAGES.length > 0;
+
   const location = resolveContent(event.location);
   const description = resolveContent(event.description);
   const time = formatTimeRange(
@@ -135,15 +140,29 @@ export default function EventDetailScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Full-bleed hero: no radius, runs under the status bar. The
-            flagship ornament is layered over it for Sanskriti Divas only. */}
+            flagship ornament is layered over it for Sanskriti Divas only.
+
+            The flagship also gets the cross-fading slideshow, when there is
+            artwork to cross-fade. Every other event — and the flagship itself
+            if the frame list is ever emptied — renders the single-image
+            `EventHero` exactly as before. */}
         <View style={{ height: HERO_HEIGHT }}>
-          <EventHero
-            event={event}
-            height={HERO_HEIGHT}
-            borderRadius={0}
-            variant="detail"
-            dimmed={status === 'past'}
-          />
+          {showSlideshow ? (
+            <HeroSlideshow
+              event={event}
+              images={SANSKRITI_DANCE_IMAGES}
+              height={HERO_HEIGHT}
+              borderRadius={0}
+            />
+          ) : (
+            <EventHero
+              event={event}
+              height={HERO_HEIGHT}
+              borderRadius={0}
+              variant="detail"
+              dimmed={status === 'past'}
+            />
+          )}
           {event.isFeatured ? <FlagshipHeroOrnament height={HERO_HEIGHT} /> : null}
         </View>
 

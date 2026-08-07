@@ -9,7 +9,7 @@
     "endTime": "TODO: fill from sourceUrl",
     "location": "TODO: fill from sourceUrl",
     "description": "TODO: fill from sourceUrl",
-    "heroImage": "TODO: fill from sourceUrl",
+    "heroImage": "events/sfvga-volleyball.jpg",
     "sourceUrl": "https://sfvga.org/events2026/uttrayan2026",
     "isFeatured": false,
     "category": "social"
@@ -69,7 +69,7 @@
     "endTime": "TODO: fill from sourceUrl",
     "location": "TODO: fill from sourceUrl",
     "description": "TODO: fill from sourceUrl",
-    "heroImage": "TODO: fill from sourceUrl",
+    "heroImage": "events/sfvga-beach-day.jpg",
     "sourceUrl": "https://sfvga.org/events2026/beachday",
     "isFeatured": false,
     "category": "social"
@@ -92,14 +92,14 @@
   {
     "id": "sanskriti-divas",
     "title": "Sanskriti Divas",
-    "startDate": "2026-09-20",
+    "startDate": "2026-09-13",
     "endDate": null,
     "allDay": true,
     "startTime": "TODO: fill from sourceUrl",
     "endTime": "TODO: fill from sourceUrl",
     "location": "TODO: fill from sourceUrl",
     "description": "TODO: fill from sourceUrl",
-    "heroImage": "TODO: fill from sourceUrl",
+    "heroImage": "events/dance4.jpg",
     "sourceUrl": "https://sfvga.org/events2026/cultural",
     "isFeatured": true,
     "category": "cultural"

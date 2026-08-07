@@ -4,7 +4,7 @@
     "name": "Jaymeen Desai",
     "role": "President",
     "roleOrder": 1,
-    "photo": "TODO: rehost headshot",
+    "photo": "board/jaymeen-desai.jpg",
     "email": null,
     "bio": null
   },
@@ -13,7 +13,7 @@
     "name": "Monika Patel",
     "role": "Vice President",
     "roleOrder": 2,
-    "photo": "TODO: rehost headshot",
+    "photo": "board/monika-patel.jpg",
     "email": null,
     "bio": null
   },
@@ -22,7 +22,7 @@
     "name": "Bhavin Shah",
     "role": "Secretary",
     "roleOrder": 3,
-    "photo": "TODO: rehost headshot",
+    "photo": "board/bhavin-shah.jpg",
     "email": null,
     "bio": null
   },
@@ -31,7 +31,7 @@
     "name": "Mayank Shah",
     "role": "Treasurer",
     "roleOrder": 4,
-    "photo": "TODO: rehost headshot",
+    "photo": "board/mayank-shah.jpg",
     "email": null,
     "bio": null
   },
@@ -40,7 +40,7 @@
     "name": "Pinal Kantawala",
     "role": "Youth Champion",
     "roleOrder": 5,
-    "photo": "TODO: rehost headshot",
+    "photo": "board/pinal-kantawala.jpg",
     "email": null,
     "bio": null
   },
@@ -49,7 +49,7 @@
     "name": "Ami Dave",
     "role": "Director",
     "roleOrder": 6,
-    "photo": "TODO: rehost headshot",
+    "photo": "board/ami-dave.jpg",
     "email": null,
     "bio": null
   },
@@ -58,16 +58,16 @@
     "name": "Bhakti Desai",
     "role": "Director",
     "roleOrder": 7,
-    "photo": "TODO: rehost headshot",
+    "photo": "board/bhakti-desai.jpg",
     "email": null,
     "bio": null
   },
   {
-    "id": "mike-taylor",
-    "name": "Mike Taylor",
-    "role": "Honorary CPA",
+    "id": "honorary-cpas",
+    "name": "Mike Taylor & Vaishali Mehta",
+    "role": "Honorary CPA's",
     "roleOrder": 8,
-    "photo": "TODO: rehost headshot",
+    "photo": null,
     "email": null,
     "bio": null
   }

@@ -2,8 +2,12 @@ import Feather from '@expo/vector-icons/Feather';
 import { MotiView } from 'moti';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { EventHero } from '@/components/events/EventHero';
+import { Image } from 'expo-image';
+
+import { EventHero, HERO_BLURHASH } from '@/components/events/EventHero';
+import { SANSKRITI_THUMBNAIL_KEY } from '@/constants/assets';
 import { HOME_COPY } from '@/constants/content';
+import { resolveImageSource } from '@/utils/imageSource';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useTheme } from '@/theme';
 import type { EventItem } from '@/types';
@@ -27,6 +31,12 @@ type FeaturedStripProps = {
 export function FeaturedStrip({ event, onPress }: FeaturedStripProps) {
   const theme = useTheme();
   const reduceMotion = useReducedMotion();
+
+  // `null` if the asset is ever unregistered, in which case this falls back to
+  // the event's own hero and then to the typographic tile — never a hole.
+  const thumbnail = event.isFeatured
+    ? resolveImageSource(SANSKRITI_THUMBNAIL_KEY)
+    : null;
 
   return (
     <MotiView
@@ -64,12 +74,29 @@ export function FeaturedStrip({ event, onPress }: FeaturedStripProps) {
         ]}
       >
         <View style={{ width: THUMB_SIZE }}>
-          <EventHero
-            event={event}
-            height={THUMB_SIZE}
-            borderRadius={theme.radii.md}
-            variant="thumb"
-          />
+          {thumbnail !== null ? (
+            // The flagship's own still. Deliberately not the detail hero's
+            // slideshow: a 68pt tile that cycled would read as a glitch.
+            <Image
+              source={thumbnail}
+              placeholder={{ blurhash: HERO_BLURHASH }}
+              transition={theme.motion.durations.base}
+              contentFit="cover"
+              accessibilityLabel={event.title}
+              style={{
+                width: THUMB_SIZE,
+                height: THUMB_SIZE,
+                borderRadius: theme.radii.md,
+              }}
+            />
+          ) : (
+            <EventHero
+              event={event}
+              height={THUMB_SIZE}
+              borderRadius={theme.radii.md}
+              variant="thumb"
+            />
+          )}
         </View>
 
         <View style={[styles.body, { marginLeft: theme.spacing.md }]}>

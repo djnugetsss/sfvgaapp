@@ -4,15 +4,15 @@ import { StyleSheet, Text, View, type DimensionValue } from 'react-native';
 import { CATEGORY_LABELS } from '@/constants/content';
 import { useTheme } from '@/theme';
 import type { EventItem } from '@/types';
-import { resolveContent } from '@/utils/content';
 import { eventInitials } from '@/utils/eventFormat';
+import { resolveImageSource } from '@/utils/imageSource';
 
 /**
  * Neutral warm blur placeholder shown while a real image decodes. Not a grey
  * box — it shares the ivory/linen cast of the rest of the app, so the load-in
  * reads as the image resolving rather than as a hole in the layout.
  */
-const BLURHASH = 'L6PZ%*00-;WB~qofofof00%MofRj';
+export const HERO_BLURHASH = 'L6PZ%*00-;WB~qofofof00%MofRj';
 
 type EventHeroProps = {
   event: EventItem;
@@ -30,9 +30,9 @@ type EventHeroProps = {
 /**
  * An event's hero image, with a typographic fallback.
  *
- * Every `heroImage` in the seed is still a "TODO:" marker, so in practice the
- * fallback is what ships today — which is exactly why it is designed rather
- * than left as an empty grey rectangle. It renders the event's initials in the
+ * Several events now carry real artwork; the rest still hold a "TODO:" marker
+ * and fall back — which is exactly why the fallback is designed rather than
+ * left as an empty grey rectangle. It renders the event's initials in the
  * serif face over a warm tint, so a card with no artwork still looks
  * deliberate.
  *
@@ -43,8 +43,8 @@ type EventHeroProps = {
  * there. The category is not lost to assistive tech either: it stays in this
  * view's `accessibilityLabel` in every variant.
  *
- * When real artwork lands, `resolveContent` starts returning a URL and the
- * image path takes over with no other change.
+ * `resolveImageSource` decides which path runs, so a bundled asset today and a
+ * Firestore URL in Phase 7 both arrive here as a ready source.
  */
 export function EventHero({
   event,
@@ -54,14 +54,14 @@ export function EventHero({
   dimmed = false,
 }: EventHeroProps) {
   const theme = useTheme();
-  const source = resolveContent(event.heroImage);
+  const source = resolveImageSource(event.heroImage);
   const radius = borderRadius ?? theme.radii.md;
 
   if (source !== null) {
     return (
       <Image
-        source={{ uri: source }}
-        placeholder={{ blurhash: BLURHASH }}
+        source={source}
+        placeholder={{ blurhash: HERO_BLURHASH }}
         transition={theme.motion.durations.base}
         contentFit="cover"
         accessibilityLabel={event.title}

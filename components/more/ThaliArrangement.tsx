@@ -87,7 +87,13 @@ export function ThaliArrangement({ items }: ThaliArrangementProps) {
           {items.map((item, index) => {
             // Clockwise from 12 o'clock, so the first item reads first.
             const angle = (360 / items.length) * index;
-            const point = polar(canvas / 2, canvas / 2, radius, angle);
+            // The ring's centre is the *container's* horizontal midpoint and
+            // the *canvas's* vertical one — they are different numbers.
+            // Using `canvas / 2` for both put every segment ~21pt left of the
+            // centre mark (canvas is derived from the ring height, not the
+            // measured width), which is what made the arrangement look
+            // off-axis even though the mark itself was centred.
+            const point = polar(width / 2, canvas / 2, radius, angle);
 
             return (
               <View
@@ -123,12 +129,14 @@ export function ThaliArrangement({ items }: ThaliArrangementProps) {
             />
           </View>
 
-          <View style={styles.grid}>
+          <View
+            style={[
+              styles.grid,
+              { columnGap: theme.spacing.md, rowGap: theme.spacing.xl },
+            ]}
+          >
             {items.map((item, index) => (
-              <View
-                key={item.id}
-                style={{ marginBottom: theme.spacing.xl, width: SEGMENT_WIDTH }}
-              >
+              <View key={item.id} style={{ width: SEGMENT_WIDTH }}>
                 <ThaliSegment
                   label={item.label}
                   icon={item.icon}
@@ -162,6 +170,10 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    // `center` rather than `space-around`: with five items the grid wraps 3 + 2,
+    // and space-around flung that last pair to opposite edges with a hole
+    // between them. Centring keeps both rows reading as one block, and the
+    // short row sits under the middle of the long one.
+    justifyContent: 'center',
   },
 });
