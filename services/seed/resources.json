@@ -28,5 +28,11 @@
     "label": "Mission & Purpose",
     "url": "https://sfvga.org/mission",
     "kind": "mission"
+  },
+  {
+    "id": "youth-hours",
+    "label": "View volunteer hours",
+    "url": "https://docs.google.com/spreadsheets/d/1ta7e9CjXyIITVmewgA1Ft4Ez7Js-UKHkbDdKLUV72nQ/edit?gid=0#gid=0",
+    "kind": "external"
   }
 ]

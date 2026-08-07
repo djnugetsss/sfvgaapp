@@ -44,6 +44,11 @@ import type {
  * TODO: confirm a dedicated donate URL — `resources.json` currently points the
  * `donation` entry at the membership page, which is the only giving link the
  * association publishes today.
+ *
+ * TODO: confirm final public/published sheet URL before release for the
+ * `youth-hours` resource — the seed carries a Google Sheets `/edit` link, which
+ * may error in a mobile in-app browser for anyone without edit access. A
+ * Publish-to-web or preview URL is more robust.
  */
 export class JsonContentRepository implements ContentRepository {
   /**

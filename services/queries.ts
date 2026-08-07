@@ -223,3 +223,50 @@ export function useResources(): UseQueryResult<Resource[], Error> {
     staleTime: staleTimes.resources,
   });
 }
+
+/**
+ * A single resource by id, or `null` when the collection carries no such
+ * entry.
+ *
+ * Selects out of the same cache entry as `useResources()` rather than adding a
+ * repository method: resources are a handful of rows that every screen already
+ * has in memory, so a second fetch would buy nothing. A screen wanting one
+ * specific link-out gets it here instead of hardcoding a URL.
+ */
+export function useResource(id: string): UseQueryResult<Resource | null, Error> {
+  const select = useCallback(
+    (resources: Resource[]) =>
+      resources.find((resource) => resource.id === id) ?? null,
+    [id],
+  );
+
+  return useQuery({
+    queryKey: queryKeys.resources.all,
+    queryFn: () => contentRepository.getResources(),
+    staleTime: staleTimes.resources,
+    select,
+  });
+}
+
+/**
+ * Id of the SFVGA Youth volunteer-hours record in `resources`.
+ *
+ * Named here rather than typed as a literal at the two call sites, so the
+ * Youth screen and the More hub agree on which row this is — More filters it
+ * out of the thali precisely because this screen owns it.
+ *
+ * TODO: confirm final public/published sheet URL before release (an /edit link
+ * may error in mobile in-app browser; a Publish-to-web or preview URL is more
+ * robust). The URL itself lives in `services/seed/resources.json`, which
+ * cannot carry a comment.
+ */
+export const YOUTH_HOURS_RESOURCE_ID = 'youth-hours';
+
+/**
+ * The volunteer-hours record the Youth screen links out to. `null` when the
+ * row is absent, which is the screen's cue to render without its button
+ * rather than with a broken one.
+ */
+export function useYouthHoursResource(): UseQueryResult<Resource | null, Error> {
+  return useResource(YOUTH_HOURS_RESOURCE_ID);
+}

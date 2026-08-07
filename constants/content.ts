@@ -137,6 +137,35 @@ export const RESOURCE_ORDER: readonly ResourceKind[] = [
   'mission',
 ];
 
+/**
+ * Youth screen.
+ *
+ * `intro` is deliberately evergreen — no counts, no names, no year. Those live
+ * in the linked hours record, which is maintained; anything restated here
+ * would go stale the week after it shipped.
+ */
+export const YOUTH_COPY = {
+  /**
+   * Two sentences, and deliberately not a third. The scaffold subtitle has
+   * already framed the screen; anything longer here pushes the one action
+   * this screen exists for below the fold.
+   */
+  intro:
+    'You will find them at the registration table, in the garba practice line, and stacking chairs long after the hall has emptied. The service they give across the Valley is theirs to be proud of.',
+  hours: {
+    eyebrow: 'Volunteer hours',
+    headline: 'Every hour, on the record',
+    body: 'Hours are logged and kept current in the association’s shared record — the same one schools and scout troops ask for.',
+    /** The primary action. Opens the record in the in-app browser. */
+    action: 'View volunteer hours',
+    /** Announced to screen readers so the destination is not a surprise. */
+    actionHint: 'Opens the volunteer hours record',
+    /** Shown in place of the button when no usable link exists yet. */
+    unavailable:
+      'The hours record is being prepared. It will open from here as soon as it is published.',
+  },
+} as const;
+
 export const MORE_COPY = {
   emptyHeadline: 'The plate is still being set',
   emptyBody:
@@ -189,7 +218,7 @@ export const SCREEN_COPY: Record<TabRouteName, ScreenCopy> = {
     eyebrow: 'Next generation',
     title: 'Youth',
     subtitle:
-      'Language classes, dance practice, service hours, and a place for the kids to lead.',
+      'The young volunteers who show up early, stay late, and carry a good part of this association.',
     empty: {
       headline: 'Programs are taking shape',
       body: 'Sign-ups, practice schedules, and volunteer opportunities will be published here.',

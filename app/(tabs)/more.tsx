@@ -16,7 +16,7 @@ import {
   SCREEN_COPY,
   STATUS_COPY,
 } from '@/constants/content';
-import { useResources } from '@/services';
+import { useResources, YOUTH_HOURS_RESOURCE_ID } from '@/services';
 import { useTheme } from '@/theme';
 import type { Resource } from '@/types';
 import { resolveContent } from '@/utils/content';
@@ -53,7 +53,12 @@ export default function MoreScreen() {
     }
 
     const byKind = new Map<string, Resource>(
-      resources.map((resource) => [resource.kind, resource]),
+      resources
+        // The volunteer-hours record is a resource in the data layer, but it
+        // belongs to the Youth screen — it would otherwise land here as a
+        // sixth compartment labelled from its `external` kind.
+        .filter((resource) => resource.id !== YOUTH_HOURS_RESOURCE_ID)
+        .map((resource) => [resource.kind, resource]),
     );
 
     // Walk the intended order first so the arrangement is stable, then append

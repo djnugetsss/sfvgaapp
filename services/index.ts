@@ -25,9 +25,12 @@ export {
   useEventsWithStatus,
   useFeaturedEvent,
   useNextUpcomingEvent,
+  useResource,
   useResources,
   useUpcomingEvents,
+  useYouthHoursResource,
   useYouthItems,
+  YOUTH_HOURS_RESOURCE_ID,
 } from '@/services/queries';
 
 /**
