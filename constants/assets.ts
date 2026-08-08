@@ -34,11 +34,35 @@ export const LOCAL_IMAGES: Record<string, number> = {
   'events/sfvga-beach-day.jpg': require('@/assets/images/events/sfvga-beach-day.jpg'),
   'events/sfvga-volleyball.jpg': require('@/assets/images/events/sfvga-volleyball.jpg'),
 
-  /* Present in the repo but not yet mapped to a record:
-     - events/sfvgabanner.jpg generic branding, fits several events equally
-     - events/youthvolunteer.jpg  food-bank service; matches no calendar event
-     Wiring one is a single line here plus the key in the seed. */
+  /* Screen banners. Neither belongs to a calendar record — the first is
+     generic association branding, the second is food-bank service that matches
+     no single event — so they are addressed by the named keys below rather
+     than through a seed's `heroImage`. */
+  'events/sfvgabanner.jpg': require('@/assets/images/events/sfvgabanner.jpg'),
+  /* Despite the extension this file is actually WebP. Metro bundles it and
+     iOS decodes it fine, so it renders correctly today; the mismatch is
+     flagged for the Phase 7 content-type cleanup. Do not rename it here
+     alone — the filename is the key, so the rename and this line move
+     together. */
+  'events/youthvolunteer.jpg': require('@/assets/images/events/youthvolunteer.jpg'),
 };
+
+/* ------------------------------------------------------------------ *
+ * Screen banner keys
+ * ------------------------------------------------------------------ */
+
+/**
+ * The contained band under Home's hero text.
+ *
+ * Named here rather than written into the screen for the same reason as the
+ * Sanskriti thumbnail: components address artwork by key, so Phase 7 can swap
+ * this for a Firestore URL without touching a component. Unmapping the key
+ * above degrades the band to nothing rendered.
+ */
+export const HOME_BANNER_KEY = 'events/sfvgabanner.jpg';
+
+/** The service photograph between Youth's intro and its hours card. */
+export const YOUTH_BANNER_KEY = 'events/youthvolunteer.jpg';
 
 /* ------------------------------------------------------------------ *
  * Sanskriti Divas — the flagship's own artwork

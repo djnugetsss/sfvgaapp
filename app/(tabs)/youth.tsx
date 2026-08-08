@@ -1,13 +1,13 @@
 import * as WebBrowser from 'expo-web-browser';
-import { MotiView } from 'moti';
 import { useCallback } from 'react';
 import { Text } from 'react-native';
 
+import { BannerImage } from '@/components/ui/BannerImage';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { ScreenScaffold } from '@/components/ui/ScreenScaffold';
 import { VolunteerHoursCard } from '@/components/youth/VolunteerHoursCard';
+import { YOUTH_BANNER_KEY } from '@/constants/assets';
 import { SCREEN_COPY, STATUS_COPY, YOUTH_COPY } from '@/constants/content';
-import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useYouthHoursResource } from '@/services';
 import { useTheme } from '@/theme';
 import { resolveContent } from '@/utils/content';
@@ -18,8 +18,10 @@ const copy = SCREEN_COPY.youth;
  * Youth — one thing, done properly.
  *
  * The screen's whole job is to hand a member the association's volunteer-hours
- * record, so it is built as a short piece of writing with a single action at
- * the end of it rather than as a button on an empty page.
+ * record, so it is built as one line of writing, one photograph, and the
+ * action — in that order, and nothing else. It used to carry a second
+ * paragraph under a rule; between them they filled the first screen and left
+ * the card, which is the point, below the fold.
  *
  * The URL is never written here. It comes from the `youth-hours` resource via
  * `useYouthHoursResource()`, passes through `resolveContent`, and reaches the
@@ -29,7 +31,6 @@ const copy = SCREEN_COPY.youth;
  */
 export default function YouthScreen() {
   const theme = useTheme();
-  const reduceMotion = useReducedMotion();
   const { data: hours, isPending, isError } = useYouthHoursResource();
 
   const openHours = useCallback(
@@ -66,28 +67,32 @@ export default function YouthScreen() {
   };
 
   return (
+    // `showDivider={false}`: the subtitle is now this screen's only prose, so
+    // the rule under it had nothing left to divide.
     <ScreenScaffold
       eyebrow={copy.eyebrow}
       title={copy.title}
       subtitle={copy.subtitle}
+      showDivider={false}
     >
-      <MotiView
-        from={{ opacity: 0, translateY: reduceMotion ? 0 : 8 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        transition={{
-          type: 'timing',
-          duration: reduceMotion ? 0 : theme.motion.durations.base,
-        }}
-        // `xl` rather than `2xl`: the scaffold already lays a full rule and two
-        // generous gaps above this, and the card below has to clear the fold.
-        style={{ marginBottom: theme.spacing.xl }}
-      >
-        <Text
-          style={[theme.typography.bodyLg, { color: theme.colors.textSecondary }]}
-        >
-          {YOUTH_COPY.intro}
-        </Text>
-      </MotiView>
+      {/* The subtitle says the youth carry this association; the photograph is
+          the evidence, and it sits between the claim and the ask.
+
+          21:9 — the shallowest band in the app, and the only one whose height
+          is charged against something else: every point of it delays the hours
+          card, which is the reason the screen exists. The crop suits this
+          photograph anyway, since the volunteers work across the middle of the
+          frame and the trim takes empty ceiling and floor.
+
+          Unregistered → nothing renders, margin included, and the card simply
+          moves up under the header. */}
+      <BannerImage
+        imageKey={YOUTH_BANNER_KEY}
+        aspectRatio={21 / 9}
+        accessibilityLabel={YOUTH_COPY.banner.alt}
+        delay={theme.motion.durations.fast}
+        style={{ marginBottom: theme.spacing.md }}
+      />
 
       {renderAction()}
     </ScreenScaffold>

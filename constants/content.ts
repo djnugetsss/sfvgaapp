@@ -91,6 +91,13 @@ export const HOME_COPY = {
   featured: {
     eyebrow: 'Flagship celebration',
   },
+  /**
+   * The band under the hero. Only the alt text lives here — the artwork is
+   * addressed by key from `@/constants/assets`.
+   */
+  banner: {
+    alt: 'The SFVGA banner hung at an association gathering in the park',
+  },
   announcements: {
     eyebrow: 'Announcements',
     emptyHeadline: 'News from the board lands here',
@@ -140,18 +147,23 @@ export const RESOURCE_ORDER: readonly ResourceKind[] = [
 /**
  * Youth screen.
  *
- * `intro` is deliberately evergreen — no counts, no names, no year. Those live
- * in the linked hours record, which is maintained; anything restated here
- * would go stale the week after it shipped.
+ * **One intro, and only one.** The screen used to open with the scaffold
+ * subtitle *and* a body paragraph beneath it, split by a rule. Two blocks of
+ * prose saying much the same thing filled the top half of the page and pushed
+ * the hours card — the reason the screen exists — off the first screen
+ * entirely. The subtitle is now the whole introduction; there is no `intro`
+ * field to add a second one back into. Anything more to say about the youth
+ * belongs in the hours record this screen links to, not above it.
+ *
+ * What copy is here stays evergreen — no counts, no names, no year. Those live
+ * in the linked record, which is maintained; anything restated here would go
+ * stale the week after it shipped.
  */
 export const YOUTH_COPY = {
-  /**
-   * Two sentences, and deliberately not a third. The scaffold subtitle has
-   * already framed the screen; anything longer here pushes the one action
-   * this screen exists for below the fold.
-   */
-  intro:
-    'You will find them at the registration table, in the garba practice line, and stacking chairs long after the hall has emptied. The service they give across the Valley is theirs to be proud of.',
+  /** Alt text for the service photograph below the intro. */
+  banner: {
+    alt: 'SFVGA youth volunteers packing meals at a Valley food bank',
+  },
   hours: {
     eyebrow: 'Volunteer hours',
     headline: 'Every hour, on the record',
@@ -217,8 +229,13 @@ export const SCREEN_COPY: Record<TabRouteName, ScreenCopy> = {
   youth: {
     eyebrow: 'Next generation',
     title: 'Youth',
+    /**
+     * Youth's *only* prose. Held to two lines on a standard device, because
+     * everything below it — the photograph and the hours card — has to fit on
+     * the first screen. See the note on `YOUTH_COPY`.
+     */
     subtitle:
-      'The young volunteers who show up early, stay late, and carry a good part of this association.',
+      'The young volunteers who show up early, stay late, and carry this association.',
     empty: {
       headline: 'Programs are taking shape',
       body: 'Sign-ups, practice schedules, and volunteer opportunities will be published here.',

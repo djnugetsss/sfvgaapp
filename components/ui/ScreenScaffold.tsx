@@ -19,6 +19,17 @@ type ScreenScaffoldProps = {
    * front door carries the cultural detail without every screen repeating it.
    */
   accentVariant?: 'accent' | 'lattice';
+  /**
+   * The rule between the header and the content.
+   *
+   * It divides two things, so a screen whose subtitle *is* its only prose has
+   * nothing to divide — the rule there reads as a section break announcing a
+   * section that never arrives. Youth turns it off for that reason. The gap it
+   * leaves behind is smaller but never zero, so the header still breathes and
+   * a screen whose first child fails to render does not collide with the type
+   * above it.
+   */
+  showDivider?: boolean;
 };
 
 /**
@@ -34,6 +45,7 @@ export function ScreenScaffold({
   subtitle,
   children,
   accentVariant = 'accent',
+  showDivider = true,
 }: ScreenScaffoldProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
@@ -99,12 +111,16 @@ export function ScreenScaffold({
           </Text>
         </MotiView>
 
-        <Rule
-          style={{
-            marginTop: theme.spacing['2xl'],
-            marginBottom: theme.spacing['2xl'],
-          }}
-        />
+        {showDivider ? (
+          <Rule
+            style={{
+              marginTop: theme.spacing['2xl'],
+              marginBottom: theme.spacing['2xl'],
+            }}
+          />
+        ) : (
+          <View style={{ height: theme.spacing.xl }} />
+        )}
 
         {children}
       </ScrollView>
