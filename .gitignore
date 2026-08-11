@@ -33,6 +33,12 @@ yarn-error.*
 # local env files
 .env*.local
 
+# Firebase — config/firebaseConfig.ts is deliberately NOT ignored. It holds
+# only the Firebase *web client* config (publishable identifiers), which EAS
+# Build needs present in the repo to compile in the cloud. See the comment at
+# the top of that file. Service-account / admin credentials must never be
+# committed — they do not belong in this project at all.
+
 # typescript
 *.tsbuildinfo
 

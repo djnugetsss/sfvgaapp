@@ -9,9 +9,10 @@
  * The Firestore swap point lives in `@/services/repository`.
  */
 
-export { contentRepository } from '@/services/repository';
+export { contentRepository, USE_FIRESTORE } from '@/services/repository';
 
 export type { ContentRepository } from '@/services/ContentRepository';
+export { FirestoreContentRepository } from '@/services/FirestoreContentRepository';
 export { JsonContentRepository } from '@/services/JsonContentRepository';
 export { ContentParseError } from '@/services/parsers';
 

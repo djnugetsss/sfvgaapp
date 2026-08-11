@@ -10,9 +10,13 @@
     "newArchEnabled": true,
     "backgroundColor": "#FAF6EF",
     "ios": {
-      "supportsTablet": true,
       "bundleIdentifier": "org.sfvga.app",
-      "icon": "./assets/icon.png"
+      "buildNumber": "1",
+      "supportsTablet": false,
+      "icon": "./assets/icon.png",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "org.sfvga.app",
