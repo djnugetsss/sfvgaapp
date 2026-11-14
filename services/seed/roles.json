@@ -1,0 +1,165 @@
+[
+  {
+    "id": "board-president",
+    "title": "President",
+    "scope": "board",
+    "responsibilities": [
+      "Sets annual goals, ensuring events align with the mission.",
+      "Oversees board effectiveness and resolves escalated issues.",
+      "Serves as external representative and final decision authority.",
+      "Leads strategic planning sessions and long-term vision development.",
+      "Facilitates board meetings and ensures productive decision-making.",
+      "Conducts annual performance review of board and committee outcomes."
+    ],
+    "order": 1
+  },
+  {
+    "id": "board-vice-president",
+    "title": "Vice President",
+    "scope": "board",
+    "responsibilities": [
+      "Assumes duties of President when the President is unavailable.",
+      "Handles disciplinary actions for non-conformance of bylaws.",
+      "Sends post-event feedback and handles retrospectives as needed.",
+      "Supports strategic planning and long-term organizational goals.",
+      "Mentors new board members and committee leads.",
+      "Facilitates collaboration across committees to ensure smooth operations."
+    ],
+    "order": 2
+  },
+  {
+    "id": "board-secretary",
+    "title": "Secretary",
+    "scope": "board",
+    "responsibilities": [
+      "Creates a yearly calendar of in-person and virtual meetings.",
+      "Maintains official meeting minutes and governance documentation.",
+      "Handles member communication for events from event chair/co-chair.",
+      "Maintains and updates the organization's official records and archives.",
+      "Assists in drafting official correspondence and announcements.",
+      "Coordinates scheduling conflicts and ensures quorum for meetings."
+    ],
+    "order": 3
+  },
+  {
+    "id": "board-treasurer",
+    "title": "Treasurer",
+    "scope": "board",
+    "responsibilities": [
+      "Oversees organizational budget, financial controls, and reporting.",
+      "Approves event budgets and monitors financial health in AGM.",
+      "Ensures compliance with non-profit financial regulations.",
+      "Prepares monthly and quarterly financial statements for the board.",
+      "Monitors cash flow and investment activities to ensure sustainability.",
+      "Conducts periodic audits to ensure transparency and accountability."
+    ],
+    "order": 4
+  },
+  {
+    "id": "board-youth-champion",
+    "title": "Youth Champion",
+    "scope": "board",
+    "responsibilities": [
+      "Represents youth interests in planning and programming.",
+      "Creates youth engagement with age-appropriate activities.",
+      "Encourages youth participation and leadership development.",
+      "Identifies trends and interests among youth to inform programs.",
+      "Builds partnerships with schools and youth organizations.",
+      "Develops mentorship opportunities connecting youth with senior members.",
+      "Advocates for youth voices in board-level discussions and decisions."
+    ],
+    "order": 5
+  },
+  {
+    "id": "board-innovation-catalyst",
+    "title": "Innovation Catalyst",
+    "scope": "board",
+    "responsibilities": [
+      "Streamlines manual processes, brings tech-driven innovation.",
+      "Ensures consistent technology standards across events.",
+      "Creates automation opportunities for optimal member experience.",
+      "Evaluates emerging technologies for potential organizational adoption.",
+      "Trains staff and volunteers on new digital tools and platforms.",
+      "Collects and analyzes digital engagement metrics to improve processes."
+    ],
+    "order": 6
+  },
+  {
+    "id": "board-senior-champion",
+    "title": "Senior Champion",
+    "scope": "board",
+    "responsibilities": [
+      "Represents senior members' needs and considerations.",
+      "Creates senior events that are budget and time friendly.",
+      "Brings in insights and concerns, prevents mission drift.",
+      "Develops wellness and educational programs for senior members.",
+      "Fosters intergenerational activities to build community cohesion.",
+      "Advocates for accessibility and inclusivity in all events.",
+      "Monitors satisfaction and gathers feedback from senior participants regularly."
+    ],
+    "order": 7
+  },
+  {
+    "id": "board-liaison",
+    "title": "Liaison",
+    "scope": "board",
+    "responsibilities": [
+      "Serves as the connection between the committee and the Board.",
+      "Ensures event alignment with board policies and goals.",
+      "Escalates risks, approvals, and decisions to the Board.",
+      "Facilitates regular communication between committees and the Board.",
+      "Tracks action items from board meetings and ensures follow-up.",
+      "Supports conflict resolution between committee members or departments.",
+      "Assists in translating board directives into actionable plans for committees."
+    ],
+    "order": 8
+  },
+  {
+    "id": "committee-chair",
+    "title": "Chair",
+    "scope": "committee",
+    "responsibilities": [
+      "Coordinates all event planning, execution, timelines, and tasks.",
+      "Works with the full committee to define goals, scope, and timelines by consensus.",
+      "Schedules and runs regular meetings to track progress and stay on course.",
+      "Acts as the primary point of contact while promoting shared ownership.",
+      "Ensures transparency through timely updates and open communication."
+    ],
+    "order": 1
+  },
+  {
+    "id": "committee-co-chair",
+    "title": "Co-Chair",
+    "scope": "committee",
+    "responsibilities": [
+      "Supports the event chair and fills in as needed.",
+      "Manages specific work streams (logistics, vendors, volunteers).",
+      "Helps track progress and resolve operational issues.",
+      "Assists in creating contingency plans for potential event challenges.",
+      "Takes similar responsibility as chair and supports in case chair is unavailable."
+    ],
+    "order": 2
+  },
+  {
+    "id": "committee-committee-member",
+    "title": "Committee Member",
+    "scope": "committee",
+    "responsibilities": [
+      "Executes assigned tasks (logistics, registration, setup, communications).",
+      "Engages members and volunteers to support participation.",
+      "Provides feedback and lessons learned after the event."
+    ],
+    "order": 3
+  },
+  {
+    "id": "committee-event-treasurer",
+    "title": "Event Treasurer",
+    "scope": "committee",
+    "responsibilities": [
+      "Creates and manages the event budget and expense tracking.",
+      "Handles payments, reimbursements, and financial reporting.",
+      "Ensures expenses stay within approved limits."
+    ],
+    "order": 4
+  }
+]

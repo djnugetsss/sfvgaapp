@@ -16,17 +16,37 @@ import { db } from '@/services/firebase';
 import {
   parseAnnouncement,
   parseBoardMember,
+  parseCollection,
   parseEventItem,
+  parseFaq,
+  parseGalleryPhoto,
+  parseGovernanceRecord,
+  parseLeader,
+  parseMembershipPlan,
+  parseMissionEntry,
   parseResource,
+  parseRoleDescription,
   parseYouthItem,
 } from '@/services/parsers';
+import {
+  SEED_COLLECTIONS,
+  type SeedCollectionName,
+} from '@/services/seedCollections';
 import type {
   Announcement,
   BoardMember,
   EventItem,
+  Faq,
+  GalleryPhoto,
+  GovernanceRecord,
+  Leader,
+  MembershipPlan,
+  MissionEntry,
   Resource,
+  RoleDescription,
   YouthItem,
 } from '@/types';
+import { byOrder, byRoleOrder } from '@/utils/order';
 
 /**
  * `ContentRepository` backed by Firestore.
@@ -76,6 +96,13 @@ const COLLECTIONS = {
   announcements: 'announcements',
   youth: 'youth',
   resources: 'resources',
+  leadership: 'leadership',
+  membershipPlans: 'membershipPlans',
+  faqs: 'faqs',
+  mission: 'mission',
+  roles: 'roles',
+  records: 'records',
+  gallery: 'gallery',
 } as const;
 
 /**
@@ -250,7 +277,7 @@ export class FirestoreContentRepository implements ContentRepository {
       COLLECTIONS.board,
       parseBoardMember,
     );
-    return members.sort((a, b) => a.roleOrder - b.roleOrder);
+    return members.sort(byRoleOrder);
   }
 
   async getAnnouncements(): Promise<Announcement[]> {
@@ -274,5 +301,75 @@ export class FirestoreContentRepository implements ContentRepository {
 
   async getResources(): Promise<Resource[]> {
     return this.readCollection(COLLECTIONS.resources, parseResource);
+  }
+
+  /**
+   * Reads one of the reference collections that arrived with the Base44
+   * content, falling back to the bundled seed while it is **empty**.
+   *
+   * This is the one place this class reads anything but Firestore, and it is
+   * narrow on purpose. An empty collection is the state between shipping these
+   * screens and running `scripts/seedFirestore.ts` — Firestore answers a read
+   * of a collection that was never written with zero documents, not an error —
+   * and during that window the screens should show the association's real
+   * content, not an empty state. The moment the collection holds even one
+   * document, Firestore is the whole truth: a row the admin deleted in the
+   * console stays deleted, and nothing is merged back in from the bundle.
+   *
+   * A failed read still rejects, exactly as `readCollection` does, so offline
+   * and permission errors keep surfacing through React Query.
+   */
+  private async readWithSeedFallback<T>(
+    name: SeedCollectionName,
+    parseItem: (input: unknown, index: number) => T,
+  ): Promise<T[]> {
+    const fromFirestore = await this.readCollection(COLLECTIONS[name], parseItem);
+
+    if (fromFirestore.length > 0) {
+      return fromFirestore;
+    }
+
+    return parseCollection(SEED_COLLECTIONS[name], parseItem, name);
+  }
+
+  async getLeadership(): Promise<Leader[]> {
+    const leaders = await this.readWithSeedFallback('leadership', parseLeader);
+    return leaders.sort(byRoleOrder);
+  }
+
+  async getMembershipPlans(): Promise<MembershipPlan[]> {
+    const plans = await this.readWithSeedFallback(
+      'membershipPlans',
+      parseMembershipPlan,
+    );
+    return plans.sort(byOrder);
+  }
+
+  async getFaqs(): Promise<Faq[]> {
+    const faqs = await this.readWithSeedFallback('faqs', parseFaq);
+    return faqs.sort(byOrder);
+  }
+
+  async getMission(): Promise<MissionEntry[]> {
+    const entries = await this.readWithSeedFallback('mission', parseMissionEntry);
+    return entries.sort(byOrder);
+  }
+
+  async getRoles(): Promise<RoleDescription[]> {
+    const roles = await this.readWithSeedFallback('roles', parseRoleDescription);
+    return roles.sort(byOrder);
+  }
+
+  async getGovernanceRecords(): Promise<GovernanceRecord[]> {
+    const records = await this.readWithSeedFallback(
+      'records',
+      parseGovernanceRecord,
+    );
+    return records.sort(byOrder);
+  }
+
+  async getGallery(): Promise<GalleryPhoto[]> {
+    const photos = await this.readWithSeedFallback('gallery', parseGalleryPhoto);
+    return photos.sort(byOrder);
   }
 }

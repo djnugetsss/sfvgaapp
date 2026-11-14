@@ -1,0 +1,8 @@
+[
+  { "id": "namrata-shah", "name": "Namrata Shah", "role": "Webmaster", "roleOrder": 1, "photo": "leadership/namrata-shah.jpg", "email": null, "bio": null },
+  { "id": "mike-taylor", "name": "Mike Taylor", "role": "Honorary CPA", "roleOrder": 2, "photo": "leadership/mike-taylor.jpg", "email": null, "bio": null },
+  { "id": "vaishali-mehta", "name": "Vaishali Mehta", "role": "Honorary CPA", "roleOrder": 3, "photo": "leadership/vaishali-mehta.jpg", "email": null, "bio": null },
+  { "id": "rahil-shah", "name": "Rahil Shah", "role": "App Developer", "roleOrder": 4, "photo": "leadership/rahil-shah.jpg", "email": null, "bio": null },
+  { "id": "maahi-desai", "name": "Maahi Desai", "role": "App Developer", "roleOrder": 5, "photo": "leadership/maahi-desai.jpg", "email": null, "bio": null },
+  { "id": "ansh-mehta", "name": "Ansh Mehta", "role": "App Developer", "roleOrder": 6, "photo": null, "email": null, "bio": null }
+]

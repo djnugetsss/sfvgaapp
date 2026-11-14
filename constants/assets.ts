@@ -27,6 +27,18 @@ export const LOCAL_IMAGES: Record<string, number> = {
   'board/ami-dave.jpg': require('@/assets/images/board/ami-dave.jpg'),
   'board/bhakti-desai.jpg': require('@/assets/images/board/bhakti-desai.jpg'),
 
+  /* Extended leadership headshots. Keyed by `leadership/<leader id>.jpg`.
+     Rehosted from the Base44 site's media store and re-encoded without
+     metadata (one original carried GPS coordinates). */
+  'leadership/namrata-shah.jpg': require('@/assets/images/leadership/namrata-shah.jpg'),
+  'leadership/mike-taylor.jpg': require('@/assets/images/leadership/mike-taylor.jpg'),
+  'leadership/vaishali-mehta.jpg': require('@/assets/images/leadership/vaishali-mehta.jpg'),
+  'leadership/rahil-shah.jpg': require('@/assets/images/leadership/rahil-shah.jpg'),
+  'leadership/maahi-desai.jpg': require('@/assets/images/leadership/maahi-desai.jpg'),
+
+  /* Youth programme photographs. */
+  'youth/cpr-training.jpg': require('@/assets/images/youth/cpr-training.jpg'),
+
   /* Event heroes. Filenames are the association's own, not slugs — the seed
      maps event → file, so renaming a photo touches one line there. */
   'events/dance0.jpg': require('@/assets/images/events/dance0.jpg'),
@@ -63,6 +75,9 @@ export const HOME_BANNER_KEY = 'events/sfvgabanner.jpg';
 
 /** The service photograph between Youth's intro and its hours card. */
 export const YOUTH_BANNER_KEY = 'events/youthvolunteer.jpg';
+
+/** The photograph on Youth's CPR-training card. */
+export const YOUTH_CPR_IMAGE_KEY = 'youth/cpr-training.jpg';
 
 /* ------------------------------------------------------------------ *
  * Sanskriti Divas — the flagship's own artwork

@@ -1,48 +1,40 @@
-import * as WebBrowser from 'expo-web-browser';
-import { useCallback } from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { BannerImage } from '@/components/ui/BannerImage';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { ScreenScaffold } from '@/components/ui/ScreenScaffold';
+import { ProgramCard } from '@/components/youth/ProgramCard';
 import { VolunteerHoursCard } from '@/components/youth/VolunteerHoursCard';
-import { YOUTH_BANNER_KEY } from '@/constants/assets';
+import { YOUTH_BANNER_KEY, YOUTH_CPR_IMAGE_KEY } from '@/constants/assets';
 import { SCREEN_COPY, STATUS_COPY, YOUTH_COPY } from '@/constants/content';
-import { useYouthHoursResource } from '@/services';
+import { useOpenLink } from '@/hooks/useOpenLink';
+import { useYouthCprResource, useYouthHoursResource } from '@/services';
 import { useTheme } from '@/theme';
 import { resolveContent } from '@/utils/content';
 
 const copy = SCREEN_COPY.youth;
 
 /**
- * Youth — one thing, done properly.
+ * Youth — the hours record first, then the programmes.
  *
- * The screen's whole job is to hand a member the association's volunteer-hours
- * record, so it is built as one line of writing, one photograph, and the
- * action — in that order, and nothing else. It used to carry a second
- * paragraph under a rule; between them they filled the first screen and left
- * the card, which is the point, below the fold.
+ * The screen's main job is still to hand a member the association's
+ * volunteer-hours record, so the order is one line of writing, one
+ * photograph, and that action — all on the first screen. CPR training sits
+ * *below* it as a quieter card (a text link, no filled button, no motif), so
+ * adding a programme never pushes the hours card down or competes with it.
  *
- * The URL is never written here. It comes from the `youth-hours` resource via
- * `useYouthHoursResource()`, passes through `resolveContent`, and reaches the
- * card as either a real link or `null` — so the day that row is missing, or
- * still carries a TODO marker, this screen renders its header and its copy and
- * simply omits the button.
+ * No URL is written here. Both come from `resources` via their hooks and pass
+ * through `resolveContent`, so a missing row or a TODO marker renders the card
+ * without its link instead of with a broken one. The CPR card goes further and
+ * is omitted entirely until its resource exists — in Firestore that means
+ * until the seed has been re-run.
  */
 export default function YouthScreen() {
   const theme = useTheme();
+  const openLink = useOpenLink();
   const { data: hours, isPending, isError } = useYouthHoursResource();
-
-  const openHours = useCallback(
-    (url: string) => {
-      void WebBrowser.openBrowserAsync(url, {
-        // Match the app's chrome so the handoff doesn't feel like leaving.
-        toolbarColor: theme.colors.background,
-        controlsColor: theme.colors.primary,
-      });
-    },
-    [theme.colors.background, theme.colors.primary],
-  );
+  const cpr = useYouthCprResource();
+  const cprUrl = resolveContent(cpr.data?.url);
 
   const renderAction = () => {
     if (isPending) {
@@ -60,32 +52,24 @@ export default function YouthScreen() {
     return (
       <VolunteerHoursCard
         url={resolveContent(hours?.url)}
-        onOpen={openHours}
+        onOpen={openLink}
         delay={theme.motion.durations.fast}
       />
     );
   };
 
   return (
-    // `showDivider={false}`: the subtitle is now this screen's only prose, so
-    // the rule under it had nothing left to divide.
+    // `showDivider={false}`: the subtitle is this screen's only prose, so a
+    // rule under it would have nothing to divide.
     <ScreenScaffold
       eyebrow={copy.eyebrow}
       title={copy.title}
       subtitle={copy.subtitle}
       showDivider={false}
     >
-      {/* The subtitle says the youth carry this association; the photograph is
-          the evidence, and it sits between the claim and the ask.
-
-          21:9 — the shallowest band in the app, and the only one whose height
-          is charged against something else: every point of it delays the hours
-          card, which is the reason the screen exists. The crop suits this
-          photograph anyway, since the volunteers work across the middle of the
-          frame and the trim takes empty ceiling and floor.
-
-          Unregistered → nothing renders, margin included, and the card simply
-          moves up under the header. */}
+      {/* 21:9 — the shallowest band in the app, because every point of it
+          delays the hours card. Unregistered → nothing renders, margin
+          included, and the card moves up under the header. */}
       <BannerImage
         imageKey={YOUTH_BANNER_KEY}
         aspectRatio={21 / 9}
@@ -95,6 +79,23 @@ export default function YouthScreen() {
       />
 
       {renderAction()}
+
+      {cprUrl !== null ? (
+        <View style={{ marginTop: theme.spacing.xl }}>
+          <ProgramCard
+            imageKey={YOUTH_CPR_IMAGE_KEY}
+            imageAlt={YOUTH_COPY.cpr.imageAlt}
+            eyebrow={YOUTH_COPY.cpr.eyebrow}
+            headline={YOUTH_COPY.cpr.headline}
+            body={YOUTH_COPY.cpr.body}
+            actionLabel={YOUTH_COPY.cpr.action}
+            actionHint={YOUTH_COPY.cpr.actionHint}
+            url={cprUrl}
+            onOpen={openLink}
+            delay={theme.motion.durations.base}
+          />
+        </View>
+      ) : null}
     </ScreenScaffold>
   );
 }

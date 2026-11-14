@@ -28,12 +28,10 @@ type BoardMemberRowProps = {
  * Two shapes, chosen by the data rather than by a flag:
  *
  * - **With a photo** — the portrait card. This is every serving officer and
- *   director.
- * - **Without one** — a text-only row, no portrait and no initials tile. The
- *   Honorary CPA's entry is the case that matters: it is one honorary role
- *   held jointly by two people, so a single face would be wrong and a monogram
- *   would invent an identity that isn't there. Letting absence of a photo pick
- *   the shape means no new field on `BoardMember`, and any future member
+ *   director, and most of the extended leadership.
+ * - **Without one** — a text-only row, no portrait and no initials tile. A
+ *   monogram would invent an identity that isn't there. Letting absence of a
+ *   photo pick the shape means no new field on `BoardMember`, and anyone
  *   awaiting a headshot degrades to the same honest row instead of a
  *   placeholder.
  *

@@ -7,7 +7,14 @@ import type {
   Announcement,
   BoardMember,
   EventItem,
+  Faq,
+  GalleryPhoto,
+  GovernanceRecord,
+  Leader,
+  MembershipPlan,
+  MissionEntry,
   Resource,
+  RoleDescription,
   YouthItem,
 } from '@/types';
 import {
@@ -58,6 +65,27 @@ export const queryKeys = {
   resources: {
     all: ['resources'] as const,
   },
+  leadership: {
+    all: ['leadership'] as const,
+  },
+  membershipPlans: {
+    all: ['membershipPlans'] as const,
+  },
+  faqs: {
+    all: ['faqs'] as const,
+  },
+  mission: {
+    all: ['mission'] as const,
+  },
+  roles: {
+    all: ['roles'] as const,
+  },
+  records: {
+    all: ['records'] as const,
+  },
+  gallery: {
+    all: ['gallery'] as const,
+  },
 } as const;
 
 /** Shared stale windows, in milliseconds. */
@@ -74,6 +102,17 @@ export const staleTimes = {
   youth: 30 * MINUTE,
   /** Static link-outs. */
   resources: 24 * HOUR,
+  /** Appointed annually, like the board. */
+  leadership: 12 * HOUR,
+  /** Dues change once a year at most. */
+  membershipPlans: 12 * HOUR,
+  /** Reference text — effectively static. */
+  faqs: 24 * HOUR,
+  mission: 24 * HOUR,
+  roles: 24 * HOUR,
+  /** A new set of minutes lands a few times a year. */
+  records: 6 * HOUR,
+  gallery: 12 * HOUR,
 } as const;
 
 /* ------------------------------------------------------------------ *
@@ -270,3 +309,84 @@ export const YOUTH_HOURS_RESOURCE_ID = 'youth-hours';
 export function useYouthHoursResource(): UseQueryResult<Resource | null, Error> {
   return useResource(YOUTH_HOURS_RESOURCE_ID);
 }
+
+/* ------------------------------------------------------------------ *
+ * Association reference content
+ * ------------------------------------------------------------------ */
+
+export function useLeadership(): UseQueryResult<Leader[], Error> {
+  return useQuery({
+    queryKey: queryKeys.leadership.all,
+    queryFn: () => contentRepository.getLeadership(),
+    staleTime: staleTimes.leadership,
+  });
+}
+
+export function useMembershipPlans(): UseQueryResult<MembershipPlan[], Error> {
+  return useQuery({
+    queryKey: queryKeys.membershipPlans.all,
+    queryFn: () => contentRepository.getMembershipPlans(),
+    staleTime: staleTimes.membershipPlans,
+  });
+}
+
+export function useFaqs(): UseQueryResult<Faq[], Error> {
+  return useQuery({
+    queryKey: queryKeys.faqs.all,
+    queryFn: () => contentRepository.getFaqs(),
+    staleTime: staleTimes.faqs,
+  });
+}
+
+export function useMission(): UseQueryResult<MissionEntry[], Error> {
+  return useQuery({
+    queryKey: queryKeys.mission.all,
+    queryFn: () => contentRepository.getMission(),
+    staleTime: staleTimes.mission,
+  });
+}
+
+export function useRoles(): UseQueryResult<RoleDescription[], Error> {
+  return useQuery({
+    queryKey: queryKeys.roles.all,
+    queryFn: () => contentRepository.getRoles(),
+    staleTime: staleTimes.roles,
+  });
+}
+
+export function useGovernanceRecords(): UseQueryResult<GovernanceRecord[], Error> {
+  return useQuery({
+    queryKey: queryKeys.records.all,
+    queryFn: () => contentRepository.getGovernanceRecords(),
+    staleTime: staleTimes.records,
+  });
+}
+
+export function useGallery(): UseQueryResult<GalleryPhoto[], Error> {
+  return useQuery({
+    queryKey: queryKeys.gallery.all,
+    queryFn: () => contentRepository.getGallery(),
+    staleTime: staleTimes.gallery,
+  });
+}
+
+/**
+ * Id of the CPR-training photo album in `resources`. Like the hours record,
+ * it belongs to the Youth screen, and More leaves it off the thali.
+ */
+export const YOUTH_CPR_RESOURCE_ID = 'youth-cpr';
+
+/** The CPR album the Youth screen links to; `null` hides that card. */
+export function useYouthCprResource(): UseQueryResult<Resource | null, Error> {
+  return useResource(YOUTH_CPR_RESOURCE_ID);
+}
+
+/**
+ * Resource ids that belong to a specific screen rather than to the More hub.
+ * More filters these out of the thali so they don't show up there as stray
+ * "Visit the website" compartments.
+ */
+export const SCREEN_OWNED_RESOURCE_IDS: ReadonlySet<string> = new Set([
+  YOUTH_HOURS_RESOURCE_ID,
+  YOUTH_CPR_RESOURCE_ID,
+]);

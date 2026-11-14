@@ -123,8 +123,8 @@ export const RESOURCE_DISPLAY: Record<
   ResourceKind,
   { label: string; icon: FeatherIconName }
 > = {
-  mission: { label: 'Our mission', icon: 'compass' },
-  membership: { label: 'Become a member', icon: 'user-plus' },
+  mission: { label: 'Mission & roles', icon: 'compass' },
+  membership: { label: 'Membership', icon: 'user-plus' },
   donation: { label: 'Support SFVGA', icon: 'heart' },
   bylaws: { label: 'Read the by‑laws', icon: 'file-text' },
   minutes: { label: 'Meeting minutes', icon: 'clipboard' },
@@ -176,6 +176,15 @@ export const YOUTH_COPY = {
     unavailable:
       'The hours record is being prepared. It will open from here as soon as it is published.',
   },
+  /** The secondary card under the hours record. */
+  cpr: {
+    eyebrow: 'Life skills',
+    headline: 'CPR training',
+    body: 'CPR training organized by SFVGA, equipping our youth with life-saving skills.',
+    imageAlt: 'SFVGA youth practising CPR at an association training session',
+    action: 'See the training photos',
+    actionHint: 'Opens the CPR training photo album',
+  },
 } as const;
 
 export const MORE_COPY = {
@@ -184,6 +193,165 @@ export const MORE_COPY = {
     'Membership, giving, and our governing documents will be linked here shortly.',
   /** Announced for the mark at the centre of the arrangement. */
   thaliLabel: 'SFVGA',
+  /** The compartment for the in-app contact page, which has no resource row. */
+  contact: { label: 'Contact & FAQ', icon: 'mail' as FeatherIconName },
+  /** Back-control label on every page pushed from the thali. */
+  backLabel: 'More',
+} as const;
+
+/* ------------------------------------------------------------------ *
+ * Pages under More
+ * ------------------------------------------------------------------ */
+
+/** Membership — dues, how to pay, and online renewal. */
+export const MEMBERSHIP_COPY = {
+  eyebrow: 'Membership',
+  title: 'Join & renew',
+  subtitle:
+    'Current members are asked to stay active and invite new families to enjoy the benefits.',
+  dues: {
+    eyebrow: 'Annual dues',
+    title: 'Membership plans',
+    /** Rendered before the board inbox, which is styled separately. */
+    payVia: 'Pay dues via Zelle to',
+  },
+  join: {
+    eyebrow: 'New members',
+    body: 'New families, and members whose details have changed, apply through the full membership form on sfvga.org.',
+    action: 'Apply on sfvga.org',
+  },
+  renew: {
+    eyebrow: 'Existing members',
+    title: 'Renew online',
+    body: 'If you are an existing member and nothing about your family has changed, renew here.',
+    nameLabel: 'Full name',
+    emailLabel: 'Email',
+    planLabel: 'Membership type',
+    agreement: 'I have reviewed and agree to the SFVGA Association By-Laws and Terms & Conditions.',
+    bylawsLink: 'Read the by-laws',
+    submit: 'Submit renewal',
+    submitHint: 'Opens your mail app with the renewal written out for you to send',
+    errors: {
+      name: 'Please enter your full name.',
+      email: 'Please enter a valid email address.',
+      plan: 'Please choose a membership type.',
+      agreement: 'Please confirm you agree to the by-laws.',
+    },
+    /** Subject line of the composed email. `{name}` is replaced. */
+    subject: 'Membership renewal — {name}',
+  },
+  done: {
+    title: 'Almost there',
+    body: 'Your renewal is written out in your mail app — press Send to deliver it to the board. Then complete your payment via Zelle to confirm your membership.',
+    zelleTitle: 'Pay via Zelle',
+    zelleBody: 'Zelle is available in your online banking app. Send your dues to',
+    noMailApp:
+      'We couldn’t open a mail app on this device. Please email your renewal to the address below, and pay via Zelle to the same address.',
+    again: 'Start another renewal',
+  },
+  empty: {
+    headline: 'Plans are being finalised',
+    body: 'This year’s dues will be listed here as soon as the board confirms them.',
+  },
+} as const;
+
+/** Contact & FAQ. */
+export const CONTACT_COPY = {
+  eyebrow: 'Contact',
+  title: 'Get in touch',
+  subtitle:
+    'Review the questions below, and write to the board for membership and general inquiries.',
+  form: {
+    eyebrow: 'Write to the board',
+    nameLabel: 'Name',
+    emailLabel: 'Email',
+    subjectLabel: 'Subject',
+    subjectPlaceholder: 'Optional',
+    messageLabel: 'Message',
+    submit: 'Send message',
+    submitHint: 'Opens your mail app with the message ready to send',
+    defaultSubject: 'Message from the SFVGA app',
+    errors: {
+      name: 'Please enter your name.',
+      email: 'Please enter a valid email address.',
+      message: 'Please write a message.',
+    },
+  },
+  done: {
+    title: 'Ready to send',
+    body: 'Your message is waiting in your mail app — press Send and the board will get back to you.',
+    noMailApp:
+      'We couldn’t open a mail app on this device. Please write to the board directly at',
+    again: 'Write another message',
+  },
+  faq: {
+    eyebrow: 'FAQs',
+    title: 'Common questions',
+  },
+} as const;
+
+/** Mission & roles. */
+export const ABOUT_COPY = {
+  eyebrow: 'Our association',
+  title: 'Mission & roles',
+  subtitle: 'Why SFVGA exists, how it carries that out, and who does what.',
+  mission: {
+    eyebrow: 'Mission',
+    title: 'Our mission',
+    pointsTitle: 'How SFVGA accomplishes its mission',
+  },
+  boardRoles: {
+    eyebrow: 'Governance',
+    title: 'Board roles',
+    body: 'Board members are elected annually, each with defined responsibilities.',
+  },
+  committeeRoles: {
+    eyebrow: 'Events',
+    title: 'Event committee roles',
+    body: 'Every event is run by a committee of members, each in one of these roles.',
+  },
+  join: 'Become a member',
+  empty: {
+    headline: 'This page is being written',
+    body: 'The mission and role descriptions will appear here shortly.',
+  },
+} as const;
+
+/** Meeting minutes, AGMs, and by-laws. */
+export const RECORDS_COPY = {
+  eyebrow: 'Governance',
+  title: 'Records',
+  subtitle: 'Official meeting minutes, annual general meeting records, and the association by-laws.',
+  groups: {
+    minutes: 'Board meeting minutes',
+    agm: 'Annual general meetings',
+  },
+  open: 'Open',
+  archive: 'View the full archive',
+  archiveUrl: 'https://sfvga.org/board/meeting-minutes-archive',
+  bylaws: {
+    eyebrow: 'By-laws',
+    title: 'Governance & by-laws',
+    body: 'The association’s by-laws set out how SFVGA is run. Every member agrees to them on joining.',
+    action: 'Read the by-laws',
+  },
+  empty: {
+    headline: 'No records published yet',
+    body: 'Minutes are added here after each board meeting is approved.',
+  },
+} as const;
+
+/** The extended-leadership section beneath the board. */
+export const LEADERSHIP_COPY = {
+  eyebrow: 'Champions',
+  title: 'Extended leadership',
+  body: 'Community members who support SFVGA’s mission through their specialized roles.',
+} as const;
+
+/** Home's Community Moments band. */
+export const GALLERY_COPY = {
+  eyebrow: 'Community moments',
+  alt: 'Photographs from SFVGA gatherings',
 } as const;
 export type ScreenCopy = {
   readonly eyebrow: string;

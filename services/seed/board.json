@@ -61,14 +61,5 @@
     "photo": "board/bhakti-desai.jpg",
     "email": null,
     "bio": null
-  },
-  {
-    "id": "honorary-cpas",
-    "name": "Mike Taylor & Vaishali Mehta",
-    "role": "Honorary CPA's",
-    "roleOrder": 8,
-    "photo": null,
-    "email": null,
-    "bio": null
   }
 ]

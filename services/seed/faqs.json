@@ -1,0 +1,32 @@
+[
+  {
+    "id": "become-member",
+    "question": "How can I become a member?",
+    "answer": "SFVGA membership is available to anyone who is referred by an existing member. Review the by-laws, fill out the membership form, and send dues via Zelle to sfvgabod@gmail.com.",
+    "order": 1
+  },
+  {
+    "id": "dues",
+    "question": "What are the membership dues?",
+    "answer": "New Family Membership is $200, Family Renewal is $140, Age 75+ Renewal is $100, and Individual/Student Renewal is $75 per calendar year.",
+    "order": 2
+  },
+  {
+    "id": "validity",
+    "question": "When is membership valid?",
+    "answer": "Membership is valid for the current calendar year. You can join any time during the year. Forms postmarked after Nov 30th require an additional $25, and no forms are accepted after Dec 31st.",
+    "order": 3
+  },
+  {
+    "id": "guests",
+    "question": "Can I bring guests to events?",
+    "answer": "Events are for members and invited guests. Membership is required to participate in most events.",
+    "order": 4
+  },
+  {
+    "id": "organization",
+    "question": "How are events organized?",
+    "answer": "Seven board members are elected annually. They finalize 8–12 events and form committees of 5–10 members each. Every member family joins at least one committee.",
+    "order": 5
+  }
+]

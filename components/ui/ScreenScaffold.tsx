@@ -1,6 +1,7 @@
+import Feather from '@expo/vector-icons/Feather';
 import { MotiView } from 'moti';
 import type { ReactNode } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LatticeRule } from '@/components/motif/LatticeRule';
@@ -30,6 +31,14 @@ type ScreenScaffoldProps = {
    * above it.
    */
   showDivider?: boolean;
+  /**
+   * Renders a back control above the eyebrow. For screens pushed onto a tab's
+   * own stack (the pages under More), which keep the tab bar and so need a way
+   * home that is not the system swipe alone.
+   */
+  onBack?: () => void;
+  /** Label beside the back chevron — the name of the screen it returns to. */
+  backLabel?: string;
 };
 
 /**
@@ -46,6 +55,8 @@ export function ScreenScaffold({
   children,
   accentVariant = 'accent',
   showDivider = true,
+  onBack,
+  backLabel = 'Back',
 }: ScreenScaffoldProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
@@ -60,7 +71,41 @@ export function ScreenScaffold({
           paddingHorizontal: theme.layout.screenPadding,
         }}
         showsVerticalScrollIndicator={false}
+        // Forms live in some scaffolds now: a tap on the submit button must
+        // land while the keyboard is up, and iOS should scroll the focused
+        // field clear of the keyboard rather than leave it underneath.
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        automaticallyAdjustKeyboardInsets
       >
+        {onBack !== undefined ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Back to ${backLabel}`}
+            onPress={onBack}
+            hitSlop={theme.spacing.sm}
+            style={({ pressed }) => [
+              styles.back,
+              {
+                marginTop: -theme.spacing.lg,
+                marginBottom: theme.spacing.lg,
+                paddingVertical: theme.spacing.sm,
+                opacity: pressed ? 0.6 : 1,
+              },
+            ]}
+          >
+            <Feather name="chevron-left" size={20} color={theme.colors.secondary} />
+            <Text
+              style={[
+                theme.typography.body,
+                { color: theme.colors.secondary, marginLeft: theme.spacing.xs },
+              ]}
+            >
+              {backLabel}
+            </Text>
+          </Pressable>
+        ) : null}
+
         <MotiView
           from={{ opacity: 0, translateY: reduceMotion ? 0 : 8 }}
           animate={{ opacity: 1, translateY: 0 }}
@@ -131,6 +176,11 @@ export function ScreenScaffold({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+  },
+  back: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
   },
   subtitle: {
     // Keeps the measure near 60 characters — the readable range for body copy.

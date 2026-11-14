@@ -1,20 +1,27 @@
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AnnouncementList } from '@/components/home/AnnouncementList';
 import { FeaturedStrip } from '@/components/home/FeaturedStrip';
 import { NextGatheringCard } from '@/components/home/NextGatheringCard';
 import { BannerImage } from '@/components/ui/BannerImage';
+import { CrossfadeSlideshow } from '@/components/ui/CrossfadeSlideshow';
 import { Rule } from '@/components/ui/Rule';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { ScreenScaffold } from '@/components/ui/ScreenScaffold';
 import { HOME_BANNER_KEY } from '@/constants/assets';
-import { HOME_COPY, SCREEN_COPY } from '@/constants/content';
-import { useAnnouncements, useFeaturedEvent, useNextUpcomingEvent } from '@/services';
+import { GALLERY_COPY, HOME_COPY, SCREEN_COPY } from '@/constants/content';
+import {
+  useAnnouncements,
+  useFeaturedEvent,
+  useGallery,
+  useNextUpcomingEvent,
+} from '@/services';
 import { useTheme } from '@/theme';
 import type { EventItem } from '@/types';
+import { resolveImageSource } from '@/utils/imageSource';
 
 const copy = SCREEN_COPY.index;
 
@@ -24,7 +31,9 @@ const copy = SCREEN_COPY.index;
  * Order is deliberate: the hero header sets the voice, the banner band puts a
  * face to it, Next Gathering answers "what's next?", the flagship strip gives
  * the year its anchor, announcements carry news, and a quiet link hands off to
- * the full calendar.
+ * the full calendar. Community Moments closes the screen: a slow cross-fade
+ * through photographs from past gatherings, last because it is the one
+ * section with nothing to act on.
  *
  * The banner is decoration, not content, which is why it sits *below* the hero
  * type rather than behind it: text over a photograph would cost the display
@@ -40,6 +49,18 @@ export default function HomeScreen() {
   const nextEvent = useNextUpcomingEvent();
   const featured = useFeaturedEvent();
   const announcements = useAnnouncements();
+  const gallery = useGallery();
+
+  // Resolved once per data change, not per render: the slideshow keys frames
+  // by position, and a fresh array every render would restart nothing but
+  // still costs a diff. Unresolvable entries are dropped, not shown broken.
+  const moments = useMemo(
+    () =>
+      (gallery.data ?? [])
+        .map((photo) => resolveImageSource(photo.image))
+        .filter((source) => source !== null),
+    [gallery.data],
+  );
 
   const openEvent = useCallback(
     (event: EventItem) => {
@@ -165,6 +186,29 @@ export default function HomeScreen() {
           style={{ marginLeft: theme.spacing.sm }}
         />
       </Pressable>
+
+      {/* Nothing renders while the gallery loads, fails, or is empty — this
+          band is a coda, and its absence should leave no trace. */}
+      {moments.length > 0 ? (
+        <View>
+          <Rule style={{ marginVertical: theme.spacing['2xl'] }} />
+          <Text
+            style={[
+              theme.typography.overline,
+              { color: theme.colors.textMuted, marginBottom: theme.spacing.md },
+            ]}
+          >
+            {GALLERY_COPY.eyebrow}
+          </Text>
+          <CrossfadeSlideshow
+            images={moments}
+            aspectRatio={16 / 10}
+            borderRadius={theme.radii.md}
+            advanceMs={5000}
+            accessibilityLabel={GALLERY_COPY.alt}
+          />
+        </View>
+      ) : null}
     </ScreenScaffold>
   );
 }

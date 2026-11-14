@@ -1,14 +1,11 @@
-import Feather from '@expo/vector-icons/Feather';
 import { MotiView } from 'moti';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { RangoliMark } from '@/components/motif/RangoliMark';
+import { PrimaryButton } from '@/components/ui/PrimaryButton';
 import { YOUTH_COPY } from '@/constants/content';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { fontFamilies, useTheme } from '@/theme';
-
-/** Comfortably clear of the 44pt tap-target floor. */
-const ACTION_HEIGHT = 54;
+import { useTheme } from '@/theme';
 
 type VolunteerHoursCardProps = {
   /**
@@ -34,11 +31,8 @@ type VolunteerHoursCardProps = {
  * gold is a hairline or a line of text; here the accent is spent once, at
  * full strength, on the only thing this screen asks anyone to do.
  *
- * Note on the label colour: the fill is `primary` with `textPrimary` type, not
- * the `primaryContrast` white the token pairing suggests. White on marigold
- * measures about 2.9:1 — under the 4.5:1 floor for type at this size. Ink on
- * gold measures about 7.4:1, and reads like foil-stamped letterpress besides.
- * Both values are tokens; only the pairing is chosen here.
+ * The button itself is `PrimaryButton`, which owns the ink-on-gold contrast
+ * rule that used to be written out here.
  */
 export function VolunteerHoursCard({
   url,
@@ -102,46 +96,13 @@ export function VolunteerHoursCard({
       </Text>
 
       {url !== null ? (
-        <Pressable
+        <PrimaryButton
           accessibilityRole="link"
-          accessibilityLabel={YOUTH_COPY.hours.action}
+          label={YOUTH_COPY.hours.action}
           accessibilityHint={YOUTH_COPY.hours.actionHint}
+          icon="arrow-up-right"
           onPress={() => onOpen(url)}
-          style={({ pressed }) => [
-            styles.action,
-            theme.shadows.sm,
-            {
-              height: ACTION_HEIGHT,
-              paddingHorizontal: theme.spacing.lg,
-              borderRadius: theme.radii.full,
-              backgroundColor: theme.colors.primary,
-              opacity: pressed ? 0.86 : 1,
-            },
-          ]}
-        >
-          <Text
-            style={[
-              theme.typography.bodyLg,
-              styles.actionLabel,
-              {
-                color: theme.colors.textPrimary,
-                // Guarded on `fontsLoaded` the same way the type scale is, so
-                // the label is never blank on first paint.
-                fontFamily: theme.fontsLoaded
-                  ? fontFamilies.sansSemiBold
-                  : undefined,
-              },
-            ]}
-          >
-            {YOUTH_COPY.hours.action}
-          </Text>
-          <Feather
-            name="arrow-up-right"
-            size={18}
-            color={theme.colors.textPrimary}
-            style={{ marginLeft: theme.spacing.sm }}
-          />
-        </Pressable>
+        />
       ) : (
         <Text style={[theme.typography.caption, { color: theme.colors.textMuted }]}>
           {YOUTH_COPY.hours.unavailable}
@@ -154,13 +115,5 @@ export function VolunteerHoursCard({
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-  },
-  action: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  actionLabel: {
-    fontWeight: '600',
   },
 });

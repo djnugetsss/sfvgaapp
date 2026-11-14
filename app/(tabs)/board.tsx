@@ -4,8 +4,14 @@ import { BoardMemberRow } from '@/components/ui/BoardMemberRow';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { ScreenScaffold } from '@/components/ui/ScreenScaffold';
-import { BOARD_CONTACT, SCREEN_COPY, STATUS_COPY } from '@/constants/content';
-import { useBoardMembers } from '@/services';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import {
+  BOARD_CONTACT,
+  LEADERSHIP_COPY,
+  SCREEN_COPY,
+  STATUS_COPY,
+} from '@/constants/content';
+import { useBoardMembers, useLeadership } from '@/services';
 import { useTheme } from '@/theme';
 
 const copy = SCREEN_COPY.board;
@@ -17,12 +23,18 @@ const copy = SCREEN_COPY.board;
  * the repository. This screen does no sorting and holds no member data; swap
  * the repository for Firestore and this file does not change.
  *
- * Phase 3 gives this screen its real design (headshots, bios, contact
- * actions). The styling here is Phase 1's tokens, unchanged.
+ * Beneath the elected board sits the extended leadership — webmaster,
+ * honorary CPAs, app developers — from its own collection. It is a separate
+ * section rather than more rows because these are appointed helpers, not
+ * officers, and it renders nothing at all while that list is loading, empty,
+ * or failing: the board is the reason this screen exists, and a problem with
+ * the secondary list must never put an error under it.
  */
 export default function BoardScreen() {
   const theme = useTheme();
   const { data: members, isPending, isError } = useBoardMembers();
+  const leadership = useLeadership();
+  const leaders = leadership.data ?? [];
 
   return (
     <ScreenScaffold
@@ -63,6 +75,19 @@ export default function BoardScreen() {
           ))}
         </View>
       )}
+
+      {leaders.length > 0 ? (
+        <View style={{ marginTop: theme.spacing['3xl'] }}>
+          <SectionHeader
+            eyebrow={LEADERSHIP_COPY.eyebrow}
+            title={LEADERSHIP_COPY.title}
+            body={LEADERSHIP_COPY.body}
+          />
+          {leaders.map((leader, index) => (
+            <BoardMemberRow key={leader.id} member={leader} isFirst={index === 0} />
+          ))}
+        </View>
+      ) : null}
     </ScreenScaffold>
   );
 }

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "new-family",
+    "name": "New Family Membership",
+    "price": 200,
+    "note": "For new families joining SFVGA",
+    "renewable": false,
+    "order": 1
+  },
+  {
+    "id": "family-renewal",
+    "name": "Family Membership Renewal",
+    "price": 140,
+    "note": "Annual renewal for existing families",
+    "renewable": true,
+    "order": 2
+  },
+  {
+    "id": "senior-renewal",
+    "name": "Age 75+ Membership Renewal",
+    "price": 100,
+    "note": "For members aged 75 and above",
+    "renewable": true,
+    "order": 3
+  },
+  {
+    "id": "individual-renewal",
+    "name": "Individual Membership Renewal",
+    "price": 75,
+    "note": "For individual members",
+    "renewable": true,
+    "order": 4
+  },
+  {
+    "id": "student-renewal",
+    "name": "Student Membership Renewal",
+    "price": 75,
+    "note": "For student members",
+    "renewable": true,
+    "order": 5
+  }
+]

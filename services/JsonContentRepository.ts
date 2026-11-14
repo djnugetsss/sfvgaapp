@@ -6,9 +6,17 @@ import {
   parseBoardMember,
   parseCollection,
   parseEventItem,
+  parseFaq,
+  parseGalleryPhoto,
+  parseGovernanceRecord,
+  parseLeader,
+  parseMembershipPlan,
+  parseMissionEntry,
   parseResource,
+  parseRoleDescription,
   parseYouthItem,
 } from '@/services/parsers';
+import { SEED_COLLECTIONS } from '@/services/seedCollections';
 import announcementsJson from '@/services/seed/announcements.json';
 import boardJson from '@/services/seed/board.json';
 import eventsJson from '@/services/seed/events.json';
@@ -18,9 +26,17 @@ import type {
   Announcement,
   BoardMember,
   EventItem,
+  Faq,
+  GalleryPhoto,
+  GovernanceRecord,
+  Leader,
+  MembershipPlan,
+  MissionEntry,
   Resource,
+  RoleDescription,
   YouthItem,
 } from '@/types';
+import { byOrder, byRoleOrder } from '@/utils/order';
 
 /**
  * `ContentRepository` backed by JSON bundled with the app.
@@ -129,5 +145,64 @@ export class JsonContentRepository implements ContentRepository {
   async getResources(): Promise<Resource[]> {
     await this.delay();
     return parseCollection(resourcesJson, parseResource, 'resources');
+  }
+
+  async getLeadership(): Promise<Leader[]> {
+    await this.delay();
+    return parseCollection(
+      SEED_COLLECTIONS.leadership,
+      parseLeader,
+      'leadership',
+    ).sort(byRoleOrder);
+  }
+
+  async getMembershipPlans(): Promise<MembershipPlan[]> {
+    await this.delay();
+    return parseCollection(
+      SEED_COLLECTIONS.membershipPlans,
+      parseMembershipPlan,
+      'membershipPlans',
+    ).sort(byOrder);
+  }
+
+  async getFaqs(): Promise<Faq[]> {
+    await this.delay();
+    return parseCollection(SEED_COLLECTIONS.faqs, parseFaq, 'faqs').sort(byOrder);
+  }
+
+  async getMission(): Promise<MissionEntry[]> {
+    await this.delay();
+    return parseCollection(
+      SEED_COLLECTIONS.mission,
+      parseMissionEntry,
+      'mission',
+    ).sort(byOrder);
+  }
+
+  async getRoles(): Promise<RoleDescription[]> {
+    await this.delay();
+    return parseCollection(
+      SEED_COLLECTIONS.roles,
+      parseRoleDescription,
+      'roles',
+    ).sort(byOrder);
+  }
+
+  async getGovernanceRecords(): Promise<GovernanceRecord[]> {
+    await this.delay();
+    return parseCollection(
+      SEED_COLLECTIONS.records,
+      parseGovernanceRecord,
+      'records',
+    ).sort(byOrder);
+  }
+
+  async getGallery(): Promise<GalleryPhoto[]> {
+    await this.delay();
+    return parseCollection(
+      SEED_COLLECTIONS.gallery,
+      parseGalleryPhoto,
+      'gallery',
+    ).sort(byOrder);
   }
 }

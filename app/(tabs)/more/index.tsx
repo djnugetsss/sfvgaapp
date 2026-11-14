@@ -1,4 +1,4 @@
-import * as WebBrowser from 'expo-web-browser';
+import { useRouter, type Href } from 'expo-router';
 import { useMemo } from 'react';
 import { Text, View } from 'react-native';
 
@@ -16,12 +16,32 @@ import {
   SCREEN_COPY,
   STATUS_COPY,
 } from '@/constants/content';
-import { useResources, YOUTH_HOURS_RESOURCE_ID } from '@/services';
+import { useOpenLink } from '@/hooks/useOpenLink';
+import { SCREEN_OWNED_RESOURCE_IDS, useResources } from '@/services';
 import { useTheme } from '@/theme';
-import type { Resource } from '@/types';
+import type { Resource, ResourceKind } from '@/types';
 import { resolveContent } from '@/utils/content';
 
 const copy = SCREEN_COPY.more;
+
+/**
+ * Compartments that open a page inside the app rather than a website.
+ *
+ * Membership, the mission, and the minutes used to be link-outs to sfvga.org;
+ * their content now lives in the app (see `app/(tabs)/more/*`), so those
+ * compartments push a page instead. The resource row still decides whether a
+ * compartment appears at all and where it sits, and its URL is still used —
+ * Membership links to the full application form, Records to the by-laws.
+ * Giving and the by-laws stay link-outs: there is nothing to show in-app that
+ * the document itself doesn't.
+ */
+const IN_APP_ROUTES: Partial<Record<ResourceKind, Href>> = {
+  membership: '/more/membership',
+  mission: '/more/about',
+  minutes: '/more/records',
+};
+
+const CONTACT_ROUTE: Href = '/more/contact';
 
 /**
  * More — the thali.
@@ -34,18 +54,14 @@ const copy = SCREEN_COPY.more;
  *
  * Order comes from `RESOURCE_ORDER`, not from the data, so the plate is always
  * arranged the same way. Membership leads and carries the screen's single
- * kumkum accent.
+ * kumkum accent. Some compartments open a page in this tab's stack, the rest
+ * open a document or website; see `IN_APP_ROUTES`.
  */
 export default function MoreScreen() {
   const theme = useTheme();
+  const router = useRouter();
+  const openLink = useOpenLink();
   const { data: resources, isPending, isError } = useResources();
-
-  const openResource = async (url: string) => {
-    await WebBrowser.openBrowserAsync(url, {
-      toolbarColor: theme.colors.background,
-      controlsColor: theme.colors.primary,
-    });
-  };
 
   const items = useMemo<ThaliItem[]>(() => {
     if (resources === undefined) {
@@ -54,10 +70,11 @@ export default function MoreScreen() {
 
     const byKind = new Map<string, Resource>(
       resources
-        // The volunteer-hours record is a resource in the data layer, but it
-        // belongs to the Youth screen — it would otherwise land here as a
-        // sixth compartment labelled from its `external` kind.
-        .filter((resource) => resource.id !== YOUTH_HOURS_RESOURCE_ID)
+        // The volunteer-hours record and the CPR album are resources in the
+        // data layer, but they belong to the Youth screen — they would
+        // otherwise land here as compartments labelled from their `external`
+        // kind.
+        .filter((resource) => !SCREEN_OWNED_RESOURCE_IDS.has(resource.id))
         .map((resource) => [resource.kind, resource]),
     );
 
@@ -73,8 +90,9 @@ export default function MoreScreen() {
     }
     ordered.push(...byKind.values());
 
-    return ordered.map((resource) => {
+    const compartments: ThaliItem[] = ordered.map((resource) => {
       const display = RESOURCE_DISPLAY[resource.kind];
+      const route = IN_APP_ROUTES[resource.kind];
       const url = resolveContent(resource.url);
 
       return {
@@ -83,18 +101,32 @@ export default function MoreScreen() {
         // it if a future kind has no display entry.
         label: display.label || (resolveContent(resource.label) ?? resource.id),
         icon: display.icon,
-        enabled: url !== null,
+        // An in-app page is always reachable; a link-out needs a real URL.
+        enabled: route !== undefined || url !== null,
         emphasis: resource.kind === 'membership',
         onPress: () => {
-          if (url !== null) {
-            void openResource(url);
+          if (route !== undefined) {
+            router.push(route);
+          } else if (url !== null) {
+            openLink(url);
           }
         },
       };
     });
-    // `openResource` closes over the theme only for browser chrome colours.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resources]);
+
+    // Contact has no resource row — it is a page, not a link — so it joins
+    // the plate last, after everything the data orders.
+    compartments.push({
+      id: 'contact',
+      label: MORE_COPY.contact.label,
+      icon: MORE_COPY.contact.icon,
+      enabled: true,
+      emphasis: false,
+      onPress: () => router.push(CONTACT_ROUTE),
+    });
+
+    return compartments;
+  }, [resources, router, openLink]);
 
   const renderBody = () => {
     if (isPending) {

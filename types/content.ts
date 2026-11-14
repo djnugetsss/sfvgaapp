@@ -121,3 +121,94 @@ export type Resource = {
   url: string;
   kind: ResourceKind;
 };
+
+/* ------------------------------------------------------------------ *
+ * Association reference content
+ *
+ * Everything below arrived with the Base44 web app's content: membership
+ * dues, FAQs, the mission, role descriptions, governance records, the
+ * extended leadership, and the community photo gallery. Each is its own
+ * collection so the board can edit one without touching the others, and each
+ * carries an explicit `order` rather than relying on document order — Firestore
+ * returns documents by id, which is never the order a reader wants.
+ * ------------------------------------------------------------------ */
+
+/**
+ * The extended leadership — webmaster, honorary CPAs, app developers.
+ *
+ * Same shape as `BoardMember` on purpose, so the same row renders both, but a
+ * separate collection: these are appointed helpers, not elected officers, and
+ * mixing them into `board` would put a CPA in the officers' running order.
+ */
+export type Leader = BoardMember;
+
+export type MembershipPlan = {
+  id: string;
+  /** As the association words it, e.g. "Family Membership Renewal". */
+  name: string;
+  /** Whole US dollars. */
+  price: number;
+  note: string | null;
+  /**
+   * True for plans an existing member can renew online. The new-family plan is
+   * false: joining goes through the full application on sfvga.org.
+   */
+  renewable: boolean;
+  order: number;
+};
+
+export type Faq = {
+  id: string;
+  question: string;
+  answer: string;
+  order: number;
+};
+
+export const MISSION_ENTRY_KINDS = ['statement', 'point'] as const;
+export type MissionEntryKind = (typeof MISSION_ENTRY_KINDS)[number];
+
+/**
+ * One paragraph of the mission: the statement itself, or one of the ways the
+ * association carries it out.
+ */
+export type MissionEntry = {
+  id: string;
+  kind: MissionEntryKind;
+  text: string;
+  order: number;
+};
+
+export const ROLE_SCOPES = ['board', 'committee'] as const;
+export type RoleScope = (typeof ROLE_SCOPES)[number];
+
+/** A role's written responsibilities — board office or event committee. */
+export type RoleDescription = {
+  id: string;
+  title: string;
+  scope: RoleScope;
+  responsibilities: string[];
+  order: number;
+};
+
+export const RECORD_GROUPS = ['minutes', 'agm'] as const;
+export type RecordGroup = (typeof RECORD_GROUPS)[number];
+
+/** A governance document: a set of meeting minutes or an AGM record. */
+export type GovernanceRecord = {
+  id: string;
+  /** As published, e.g. "2026 Q1" or "AGM 2025". */
+  label: string;
+  url: string;
+  group: RecordGroup;
+  /** Ascending display order within the group — newest first by convention. */
+  order: number;
+};
+
+/** One frame of the Community Moments gallery on Home. */
+export type GalleryPhoto = {
+  id: string;
+  /** Remote URL or bundled asset key, resolved by `resolveImageSource`. */
+  image: string;
+  caption: string | null;
+  order: number;
+};

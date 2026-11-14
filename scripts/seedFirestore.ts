@@ -54,8 +54,8 @@
  *
  * Reads `services/seed/*.json` and writes each record to the matching
  * collection, using the record's own `id` as the document id. That makes it
- * idempotent: a second run overwrites the same five documents rather than
- * creating five more. It never deletes — a document you added by hand in the
+ * idempotent: a second run overwrites the same documents rather than
+ * creating duplicates. It never deletes — a document you added by hand in the
  * console survives, and a record removed from the JSON is left in place rather
  * than being cleaned up behind your back.
  *
@@ -85,6 +85,13 @@ const SEEDS = [
   { file: 'announcements.json', collection: 'announcements' },
   { file: 'youth.json', collection: 'youth' },
   { file: 'resources.json', collection: 'resources' },
+  { file: 'leadership.json', collection: 'leadership' },
+  { file: 'membershipPlans.json', collection: 'membershipPlans' },
+  { file: 'faqs.json', collection: 'faqs' },
+  { file: 'mission.json', collection: 'mission' },
+  { file: 'roles.json', collection: 'roles' },
+  { file: 'records.json', collection: 'records' },
+  { file: 'gallery.json', collection: 'gallery' },
 ] as const;
 
 type SeedRecord = Record<string, unknown> & { id: string };
@@ -196,8 +203,11 @@ const main = async (): Promise<void> => {
     console.log(
       '\nDone. Verify in the Firebase console → Firestore Database → Data: ' +
         'you should see the collections events, board, announcements, youth ' +
-        '(may be absent if empty), and resources, each holding documents named ' +
-        'by their slug id.\n' +
+        '(may be absent if empty), resources, leadership, membershipPlans, ' +
+        'faqs, mission, roles, records, and gallery, each holding documents ' +
+        'named by their slug id.\n' +
+        'The seed never deletes: board/honorary-cpas (now two people in ' +
+        'leadership) must be removed from the console by hand.\n' +
         'Now restore the locked-down rules (allow write: if false).',
     );
   } finally {

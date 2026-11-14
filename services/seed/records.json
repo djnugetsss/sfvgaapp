@@ -1,0 +1,12 @@
+[
+  { "id": "minutes-2026-q1", "label": "2026 Q1", "url": "https://sfvga.org/s/2026-Q1-Meeting-Minutes.docx", "group": "minutes", "order": 1 },
+  { "id": "minutes-2025-jan-oct", "label": "2025 Jan–October", "url": "https://sfvga.org/s/Meeting-Minutes-Quarterly.pdf", "group": "minutes", "order": 2 },
+  { "id": "minutes-2024-09-18", "label": "September 18, 2024", "url": "https://sfvga.org/s/2024-Quarterly-meeting-minutes-Sept.docx", "group": "minutes", "order": 3 },
+  { "id": "minutes-2024-07-17", "label": "July 17, 2024", "url": "https://sfvga.org/s/2024-Quarterly-meeting-minutes-july.docx", "group": "minutes", "order": 4 },
+  { "id": "minutes-2024-04-12", "label": "April 12, 2024", "url": "https://sfvga.org/s/2024-quarterly-meeting-minutes-april.docx", "group": "minutes", "order": 5 },
+  { "id": "minutes-2024-01-13", "label": "January 13, 2024", "url": "https://sfvga.org/s/SFVGABOD_SMeeting01132024.pdf", "group": "minutes", "order": 6 },
+  { "id": "agm-2025", "label": "AGM 2025", "url": "https://sfvga.org/s/AGM-2025.pptx", "group": "agm", "order": 1 },
+  { "id": "agm-2024", "label": "AGM 2024", "url": "https://sfvga.org/s/AGM-2024-Meeting-Minutes.pdf", "group": "agm", "order": 2 },
+  { "id": "agm-2023", "label": "AGM 2023", "url": "https://sfvga.org/s/AGM-2023.pptx", "group": "agm", "order": 3 },
+  { "id": "agm-2022", "label": "AGM 2022", "url": "https://sfvga.org/s/AGM-2022.pptx", "group": "agm", "order": 4 }
+]

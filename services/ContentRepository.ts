@@ -2,7 +2,14 @@ import type {
   Announcement,
   BoardMember,
   EventItem,
+  Faq,
+  GalleryPhoto,
+  GovernanceRecord,
+  Leader,
+  MembershipPlan,
+  MissionEntry,
   Resource,
+  RoleDescription,
   YouthItem,
 } from '@/types';
 
@@ -19,6 +26,9 @@ import type {
  * - `getEvents` / `getUpcomingEvents`: ascending by `startDate`.
  * - `getBoardMembers`: ascending by `roleOrder`.
  * - `getAnnouncements`: pinned first, then descending by `date`.
+ * - `getLeadership`: ascending by `roleOrder`.
+ * - Every other collection (`getMembershipPlans`, `getFaqs`, `getMission`,
+ *   `getRoles`, `getGovernanceRecords`, `getGallery`): ascending by `order`.
  */
 export interface ContentRepository {
   /**
@@ -65,4 +75,25 @@ export interface ContentRepository {
 
   /** Outbound links — membership, giving, governance documents. */
   getResources(): Promise<Resource[]>;
+
+  /** Extended leadership — appointed helpers, ascending by `roleOrder`. */
+  getLeadership(): Promise<Leader[]>;
+
+  /** Membership dues, ascending by `order`. */
+  getMembershipPlans(): Promise<MembershipPlan[]>;
+
+  /** Frequently asked questions, ascending by `order`. */
+  getFaqs(): Promise<Faq[]>;
+
+  /** The mission statement and its points, ascending by `order`. */
+  getMission(): Promise<MissionEntry[]>;
+
+  /** Board and committee role descriptions, ascending by `order`. */
+  getRoles(): Promise<RoleDescription[]>;
+
+  /** Meeting minutes and AGM records, ascending by `order`. */
+  getGovernanceRecords(): Promise<GovernanceRecord[]>;
+
+  /** Community Moments photographs, ascending by `order`. */
+  getGallery(): Promise<GalleryPhoto[]>;
 }
