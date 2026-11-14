@@ -192,21 +192,11 @@ with a date-only countdown, the flagship strip (`useFeaturedEvent`),
 announcements, and a browse-all link. If the flagship event *is* the next
 gathering, only the card renders — no duplicate.
 
-**Events** — a month calendar above a scrollable agenda, both from
-`useEventsWithStatus()`. It opens on August 2026, between the completed and
-upcoming halves of the year, so the default view is never empty. Marker
-vocabulary is deliberately small: gold dot = upcoming or today, muted dot =
-completed, gold ring = the featured event, soft gold wash = selected day, thin
-outline = today. Past events are muted to 60% with a "Completed" tag and stay
-fully tappable — the "This month" / "All 2026" toggle exists so the completed
-half of the year is always reachable.
-
-The calendar uses `react-native-calendars` for grid maths and swipe gestures
-only; `dayComponent`, `renderHeader`, and `renderArrow` replace every pixel of
-its visual language. The month title is driven by our own `visibleMonth` state,
-not the date the library passes to `renderHeader` — with `enableSwipeMonths`
-the library pre-renders adjacent pages and hands the header the *previous*
-month, which rendered "July 2026" above an August grid.
+**Events** — the whole year as one list from `useEventsWithStatus()`, grouped
+under month headings. Nothing is filtered by date: past events are muted to 60%
+with a "Completed" tag and stay fully tappable, and a month with no events has
+no heading. (An earlier version opened on a month calendar with a "This month /
+All 2026" toggle; it was removed, and `react-native-calendars` with it.)
 
 ### Seed content and TODO markers
 

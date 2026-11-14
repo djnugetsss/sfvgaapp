@@ -8,6 +8,7 @@ import { FeaturedStrip } from '@/components/home/FeaturedStrip';
 import { NextGatheringCard } from '@/components/home/NextGatheringCard';
 import { BannerImage } from '@/components/ui/BannerImage';
 import { CrossfadeSlideshow } from '@/components/ui/CrossfadeSlideshow';
+import { Masthead } from '@/components/ui/Masthead';
 import { Rule } from '@/components/ui/Rule';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { ScreenScaffold } from '@/components/ui/ScreenScaffold';
@@ -28,7 +29,8 @@ const copy = SCREEN_COPY.index;
 /**
  * Home — forward-looking and warm.
  *
- * Order is deliberate: the hero header sets the voice, the banner band puts a
+ * Order is deliberate: the crest and the association's name open the screen
+ * (the Base44 site's header, as a masthead), the hero header sets the voice, the banner band puts a
  * face to it, Next Gathering answers "what's next?", the flagship strip gives
  * the year its anchor, announcements carry news, and a quiet link hands off to
  * the full calendar. Community Moments closes the screen: a slow cross-fade
@@ -82,6 +84,7 @@ export default function HomeScreen() {
     // a board member vets the wording and transliteration.
     <ScreenScaffold
       eyebrow={copy.eyebrow}
+      masthead={<Masthead name={copy.eyebrow} />}
       title={copy.title}
       subtitle={copy.subtitle}
       accentVariant="lattice"

@@ -118,7 +118,7 @@ export default function MembershipScreen() {
         '',
         `Name: ${name.trim()}`,
         `Email: ${email.trim()}`,
-        `Membership type: ${plan.name} — ${formatPrice(plan)}`,
+        `Membership type: ${plan.name} (${formatPrice(plan)})`,
         '',
         'I have reviewed and agree to the SFVGA Association By-Laws and Terms & Conditions.',
         `I will send my dues via Zelle to ${BOARD_CONTACT.email}.`,

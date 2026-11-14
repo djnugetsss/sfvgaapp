@@ -111,7 +111,7 @@ export default function EventDetailScreen() {
         </Text>
         <Pressable onPress={() => router.back()}>
           <Text style={[theme.typography.body, { color: theme.colors.primary }]}>
-            {EVENTS_COPY.scopeAllYear}
+            {EVENTS_COPY.detail.notFound.back}
           </Text>
         </Pressable>
       </View>

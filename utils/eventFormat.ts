@@ -1,15 +1,13 @@
 import { differenceInCalendarDays, format, parseISO, startOfDay } from 'date-fns';
 
-import type { EventItem } from '@/types';
-
 /**
  * Presentation helpers for events. Formatting only — no filtering, no status
  * logic (that lives in `@/utils/eventStatus`).
  */
 
-/** Calendar key: `2026-08-23`. Matches react-native-calendars' date strings. */
-export function toDayKey(iso: string): string {
-  return format(parseISO(iso), 'yyyy-MM-dd');
+/** Month key: `2026-08`. Groups the events list under month headings. */
+export function monthKey(iso: string): string {
+  return format(parseISO(iso), 'yyyy-MM');
 }
 
 /** `Sunday, Aug 23` — the long form used on cards and detail. */
@@ -25,6 +23,15 @@ export function formatEventDayShort(iso: string): string {
 /** `August 2026` — month headings. */
 export function formatMonthTitle(date: Date): string {
   return format(date, 'MMMM yyyy');
+}
+
+/**
+ * Whole calendar days from today until `iso` — `0` today, negative once past.
+ * Counted on calendar-day boundaries for the same reason as `formatCountdown`:
+ * the number holds steady all day instead of ticking down with the hour.
+ */
+export function daysUntil(iso: string, now: Date = new Date()): number {
+  return differenceInCalendarDays(startOfDay(parseISO(iso)), startOfDay(now));
 }
 
 /**
@@ -95,13 +102,5 @@ export function formatTimeRange(
 export function sortByStartDate<T extends { startDate: string }>(items: readonly T[]): T[] {
   return [...items].sort(
     (a, b) => parseISO(a.startDate).getTime() - parseISO(b.startDate).getTime(),
-  );
-}
-
-/** True when the event's start date falls inside the given month. */
-export function isInMonth(event: EventItem, month: Date): boolean {
-  const start = parseISO(event.startDate);
-  return (
-    start.getFullYear() === month.getFullYear() && start.getMonth() === month.getMonth()
   );
 }

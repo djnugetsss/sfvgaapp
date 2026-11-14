@@ -3,7 +3,7 @@ import { Stack } from 'expo-router';
 import { useTheme } from '@/theme';
 
 /**
- * Stack nested inside the Events tab, so event detail pushes over the calendar
+ * Stack nested inside the Events tab, so event detail pushes over the events list
  * while the tab bar stays put — the standard iOS pattern, and it keeps the
  * user's place in the agenda when they come back.
  *

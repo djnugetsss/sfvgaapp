@@ -81,7 +81,7 @@ export function EventHero({
     <View
       accessible
       accessibilityRole="image"
-      accessibilityLabel={`${event.title} — ${CATEGORY_LABELS[event.category]}`}
+      accessibilityLabel={`${event.title}, ${CATEGORY_LABELS[event.category]}`}
       style={[
         styles.fallback,
         {

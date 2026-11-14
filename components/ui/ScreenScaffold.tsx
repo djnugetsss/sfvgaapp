@@ -18,8 +18,10 @@ type ScreenScaffoldProps = {
    * The ornament under the eyebrow. `accent` is the short gold tick used
    * everywhere; `lattice` is the diamond band, reserved for Home so the app's
    * front door carries the cultural detail without every screen repeating it.
+   * `none` is for a `masthead` that draws its own — Events' tabs carry the
+   * gold tick under the selected tab.
    */
-  accentVariant?: 'accent' | 'lattice';
+  accentVariant?: 'accent' | 'lattice' | 'none';
   /**
    * The rule between the header and the content.
    *
@@ -37,6 +39,12 @@ type ScreenScaffoldProps = {
    * home that is not the system swipe alone.
    */
   onBack?: () => void;
+  /**
+   * Replaces the overline eyebrow with a richer header — Home's crest and
+   * name. The eyebrow string is still required, so the copy stays in one
+   * place, but is not rendered when a masthead is given.
+   */
+  masthead?: ReactNode;
   /** Label beside the back chevron — the name of the screen it returns to. */
   backLabel?: string;
 };
@@ -57,6 +65,7 @@ export function ScreenScaffold({
   showDivider = true,
   onBack,
   backLabel = 'Back',
+  masthead,
 }: ScreenScaffoldProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
@@ -111,14 +120,16 @@ export function ScreenScaffold({
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: theme.motion.durations.base }}
         >
-          <Text
-            style={[
-              theme.typography.overline,
-              { color: theme.colors.textMuted, marginBottom: theme.spacing.md },
-            ]}
-          >
-            {eyebrow}
-          </Text>
+          {masthead ?? (
+            <Text
+              style={[
+                theme.typography.overline,
+                { color: theme.colors.textMuted, marginBottom: theme.spacing.md },
+              ]}
+            >
+              {eyebrow}
+            </Text>
+          )}
 
           {accentVariant === 'lattice' ? (
             <LatticeRule
@@ -132,7 +143,7 @@ export function ScreenScaffold({
               opacity={0.6}
               style={{ marginBottom: theme.spacing.lg, width: 110 }}
             />
-          ) : (
+          ) : accentVariant === 'none' ? null : (
             <Rule variant="short" style={{ marginBottom: theme.spacing.lg }} />
           )}
 

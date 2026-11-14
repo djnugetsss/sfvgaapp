@@ -55,7 +55,7 @@ export default function ContactScreen() {
     const opened = await composeEmail({
       to: BOARD_CONTACT.email,
       subject: subject.trim() || copy.form.defaultSubject,
-      body: [message.trim(), '', '—', name.trim(), email.trim()].join('\n'),
+      body: [message.trim(), '', name.trim(), email.trim()].join('\n'),
     });
     setOutcome(opened ? 'sent' : 'no-mail-app');
   };

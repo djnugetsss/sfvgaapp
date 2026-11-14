@@ -1,49 +1,100 @@
-import { useRouter } from 'expo-router';
-import { MotiView } from 'moti';
-import { useCallback, useMemo, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { EventCalendar } from '@/components/events/EventCalendar';
 import { EventCard } from '@/components/events/EventCard';
 import { LatticeRule } from '@/components/motif/LatticeRule';
-import { ScopeToggle, type AgendaScope } from '@/components/events/ScopeToggle';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { LoadingState } from '@/components/ui/LoadingState';
+import { OverlineTabs, type OverlineTab } from '@/components/ui/OverlineTabs';
 import { ScreenScaffold } from '@/components/ui/ScreenScaffold';
+import { SectionHeader } from '@/components/ui/SectionHeader';
 import { EVENTS_COPY, SCREEN_COPY, STATUS_COPY } from '@/constants/content';
-import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useEventsWithStatus } from '@/services';
 import { useTheme } from '@/theme';
 import type { EventItem } from '@/types';
-import { formatMonthTitle, isInMonth, toDayKey } from '@/utils/eventFormat';
+import { daysUntil, formatMonthTitle, monthKey } from '@/utils/eventFormat';
+import type { EventWithStatus } from '@/utils/eventStatus';
 
 const copy = SCREEN_COPY.events;
+const sections = EVENTS_COPY.sections;
 
-/** The seed calendar is a 2026 season; the year view is scoped to it. */
-const SEASON_START = new Date(2026, 7, 1); // August 2026 — between past and upcoming.
+type EventsView = 'current' | 'past';
+
+const VIEWS: readonly OverlineTab<EventsView>[] = [
+  { key: 'current', label: EVENTS_COPY.tabs.current.label },
+  { key: 'past', label: EVENTS_COPY.tabs.past.label },
+];
+
+type MonthGroup = {
+  key: string;
+  title: string;
+  events: EventWithStatus[];
+};
+
+/** Groups events under month headings, preserving the order they arrive in. */
+function groupByMonth(events: readonly EventWithStatus[]): MonthGroup[] {
+  const byMonth = new Map<string, MonthGroup>();
+
+  for (const item of events) {
+    const key = monthKey(item.event.startDate);
+    let group = byMonth.get(key);
+    if (group === undefined) {
+      group = {
+        key,
+        title: formatMonthTitle(new Date(`${key}-01T00:00:00`)),
+        events: [],
+      };
+      byMonth.set(key, group);
+    }
+    group.events.push(item);
+  }
+
+  return [...byMonth.values()];
+}
 
 /**
- * Events — the app's signature screen: a themed month calendar above a
- * scrollable agenda, both bound to the same real data.
+ * Events — what's on now and what's coming, with the past one tab over.
  *
- * Two rules shape the behaviour:
- * - **Nothing is ever filtered out by date.** `useEventsWithStatus()` returns
- *   the whole year; past events are muted, never removed, and stay tappable.
- * - **The default view is never empty.** The calendar opens on August 2026,
- *   which sits between the completed half of the year and the upcoming half,
- *   and the month scope has content there. Selecting an empty day offers a way
- *   back rather than dead-ending.
+ * Two views, switched from the screen's own eyebrow ("Gatherings   Past
+ * events") rather than from a control stacked under the header. Everything is
+ * derived from each event's live status, which re-derives at midnight, so an
+ * event moves from one view to the other on its own while the app stays open.
+ *
+ * **Gatherings:**
+ *
+ * 1. **The highlight.** Every event happening today, each wearing a "Today"
+ *    seal; on an ordinary day with nothing on, the single next event instead,
+ *    with a seal counting the days. It is the first thing on the screen
+ *    because it is what people open this tab to find.
+ * 2. **Coming up** — the remaining future events, by month, soonest first.
+ *
+ * **Past events:** everything already finished, by month, most recent first,
+ * so last month's gathering sits at the top rather than the bottom. Still
+ * muted, still tappable: past events move, they are never removed.
+ *
+ * Nothing is filtered at the source. `useEventsWithStatus()` returns the whole
+ * year; this screen only decides which section each event sits in.
  */
 export default function EventsScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const reduceMotion = useReducedMotion();
 
   const { data: events, isPending, isError } = useEventsWithStatus();
+  // `/events?view=past` opens straight onto the archive — for a link from an
+  // announcement, and for testing. Anything else opens on Gatherings.
+  const params = useLocalSearchParams<{ view?: string }>();
+  const [view, setView] = useState<EventsView>(
+    params.view === 'past' ? 'past' : 'current',
+  );
 
-  const [visibleMonth, setVisibleMonth] = useState<Date>(SEASON_START);
-  const [selectedDay, setSelectedDay] = useState<string | null>(null);
-  const [scope, setScope] = useState<AgendaScope>('month');
+  // The screen stays mounted inside the tab, so a link arriving while it is
+  // already open changes the param without remounting — follow it.
+  useEffect(() => {
+    if (params.view === 'past' || params.view === 'current') {
+      setView(params.view);
+    }
+  }, [params.view]);
 
   const handleOpenEvent = useCallback(
     (event: EventItem) => {
@@ -52,40 +103,56 @@ export default function EventsScreen() {
     [router],
   );
 
-  const handleSelectDay = useCallback((day: string) => {
-    // Tapping the selected day again clears the filter — a second tap
-    // shouldn't trap the user on one date.
-    setSelectedDay((current) => (current === day ? null : day));
-    setScope('month');
-  }, []);
+  const { highlighted, upcoming, past } = useMemo(() => {
+    const all = events ?? [];
+    const today = all.filter(({ status }) => status === 'today');
+    const future = all.filter(({ status }) => status === 'upcoming');
+    const finished = all.filter(({ status }) => status === 'past');
 
-  const handleChangeMonth = useCallback((month: Date) => {
-    setVisibleMonth(month);
-    setSelectedDay(null);
-  }, []);
+    // Today's events win the highlight; otherwise the next one up takes it.
+    // Either way, a highlighted event is not repeated in the list below.
+    const isToday = today.length > 0;
+    const lead = isToday ? today : future.slice(0, 1);
 
-  /** The agenda's contents, following scope and day selection. */
-  const visibleEvents = useMemo(() => {
-    if (events === undefined) {
-      return [];
-    }
+    return {
+      highlighted: lead,
+      upcoming: groupByMonth(isToday ? future : future.slice(1)),
+      // Events arrive ascending; reversed, both the months and the events
+      // inside each month run newest first.
+      past: groupByMonth([...finished].reverse()),
+    };
+  }, [events]);
 
-    if (scope === 'year') {
-      return events;
-    }
+  const renderGroups = (groups: MonthGroup[], startIndex: number) => {
+    // `index` runs across the section, not per month, so the cards' staggered
+    // entrance reads as one cascade down the page.
+    let index = startIndex;
 
-    const inMonth = events.filter(({ event }) => isInMonth(event, visibleMonth));
+    return groups.map((group, groupIndex) => (
+      <View key={group.key} style={{ marginTop: groupIndex === 0 ? 0 : theme.spacing.lg }}>
+        <Text
+          accessibilityRole="header"
+          style={[
+            theme.typography.overline,
+            { color: theme.colors.textMuted, marginBottom: theme.spacing.md },
+          ]}
+        >
+          {group.title}
+        </Text>
+        {group.events.map(({ event, status }) => (
+          <EventCard
+            key={event.id}
+            event={event}
+            status={status}
+            index={index++}
+            onPress={handleOpenEvent}
+          />
+        ))}
+      </View>
+    ));
+  };
 
-    if (selectedDay === null) {
-      return inMonth;
-    }
-
-    return inMonth.filter(({ event }) => toDayKey(event.startDate) === selectedDay);
-  }, [events, scope, visibleMonth, selectedDay]);
-
-  const monthLabel = formatMonthTitle(visibleMonth);
-
-  const renderAgenda = () => {
+  const renderBody = () => {
     if (isPending) {
       return <LoadingState />;
     }
@@ -98,87 +165,64 @@ export default function EventsScreen() {
       );
     }
 
-    if (visibleEvents.length === 0) {
-      const empty = selectedDay !== null ? EVENTS_COPY.emptyDay : EVENTS_COPY.emptyMonth;
-      return (
-        <EmptyState headline={empty.headline} body={empty.body} />
+    if ((events ?? []).length === 0) {
+      return <EmptyState headline={copy.empty.headline} body={copy.empty.body} />;
+    }
+
+    if (view === 'past') {
+      return past.length > 0 ? (
+        <View>{renderGroups(past, 0)}</View>
+      ) : (
+        <EmptyState headline={EVENTS_COPY.emptyPast.headline} body={EVENTS_COPY.emptyPast.body} />
       );
     }
 
     return (
-      <MotiView
-        // Re-keying on the active slice gives one clean cross-fade when the
-        // month, day, or scope changes — instead of every card re-animating
-        // independently on each state change.
-        key={`${scope}-${monthLabel}-${selectedDay ?? 'all'}`}
-        from={{ opacity: reduceMotion ? 1 : 0 }}
-        animate={{ opacity: 1 }}
-        transition={{
-          type: 'timing',
-          duration: reduceMotion ? 0 : theme.motion.durations.fast,
-        }}
-      >
-        {visibleEvents.map(({ event, status }, index) => (
-          <EventCard
-            key={event.id}
-            event={event}
-            status={status}
-            index={index}
-            onPress={handleOpenEvent}
-          />
-        ))}
-      </MotiView>
+      <View>
+        {highlighted.length > 0 ? (
+          <View>
+            {highlighted.map((item, index) => (
+              <EventCard
+                key={item.event.id}
+                event={item.event}
+                status={item.status}
+                index={index}
+                // A multi-day event that began yesterday is still "today";
+                // clamp so the seal never shows a negative count.
+                countdownDays={item.status === 'today' ? 0 : daysUntil(item.event.startDate)}
+                onPress={handleOpenEvent}
+              />
+            ))}
+          </View>
+        ) : (
+          <EmptyState headline={EVENTS_COPY.allPast.headline} body={EVENTS_COPY.allPast.body} />
+        )}
+
+        {upcoming.length > 0 ? (
+          <View style={{ marginTop: theme.spacing['2xl'] }}>
+            <SectionHeader eyebrow={sections.upcomingEyebrow} title={sections.upcoming} />
+            {renderGroups(upcoming, highlighted.length)}
+          </View>
+        ) : null}
+      </View>
     );
   };
 
   return (
     <ScreenScaffold
       eyebrow={copy.eyebrow}
+      masthead={<OverlineTabs tabs={VIEWS} value={view} onChange={setView} />}
+      accentVariant="none"
       title={copy.title}
-      subtitle={copy.subtitle}
+      subtitle={EVENTS_COPY.tabs[view].subtitle}
+      showDivider={false}
     >
-      <EventCalendar
-        events={events ?? []}
-        selectedDay={selectedDay}
-        visibleMonth={visibleMonth}
-        onSelectDay={handleSelectDay}
-        onChangeMonth={handleChangeMonth}
-      />
+      {/* The one motif on this screen, opening the list. */}
+      <LatticeRule style={{ marginBottom: theme.spacing.xl }} />
 
-      {/* The one motif on this screen. The calendar grid itself stays plain —
-          legibility of dates beats decoration. */}
-      <LatticeRule
-        style={{
-          marginTop: theme.spacing.md,
-          marginBottom: theme.spacing.lg,
-        }}
-      />
-
-      <View style={{ marginBottom: theme.spacing.lg }}>
-        <ScopeToggle
-          value={scope}
-          onChange={(next) => {
-            setScope(next);
-            setSelectedDay(null);
-          }}
-          monthLabel={EVENTS_COPY.scopeThisMonth}
-          yearLabel={EVENTS_COPY.scopeAllYear}
-        />
-      </View>
-
-      {selectedDay !== null ? (
-        <Text
-          style={[
-            theme.typography.caption,
-            { color: theme.colors.textMuted, marginBottom: theme.spacing.md },
-          ]}
-          onPress={() => setSelectedDay(null)}
-        >
-          {EVENTS_COPY.clearDayFilter}
-        </Text>
-      ) : null}
-
-      {renderAgenda()}
+      {/* Re-keyed on the view so switching tabs replays the cards' entrance
+          instead of swapping lists in place. */}
+      <View key={view}>{renderBody()}</View>
     </ScreenScaffold>
   );
 }

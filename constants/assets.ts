@@ -60,6 +60,18 @@ export const LOCAL_IMAGES: Record<string, number> = {
 };
 
 /* ------------------------------------------------------------------ *
+ * Brand
+ * ------------------------------------------------------------------ */
+
+/**
+ * The association's round crest — the logo from the Base44 site's header.
+ * A direct module rather than a registry key: it is the app's identity, not
+ * content, so there is no record that could ever point at a different file.
+ * 360px square, transparent, enough for the 56pt masthead at 3x and then some.
+ */
+export const BRAND_LOGO: number = require('@/assets/images/brand/sfvga-logo.png');
+
+/* ------------------------------------------------------------------ *
  * Screen banner keys
  * ------------------------------------------------------------------ */
 

@@ -52,20 +52,47 @@ export const STATUS_LABELS: Record<EventStatus, string | null> = {
 
 /** Events screen and event detail. */
 export const EVENTS_COPY = {
-  scopeThisMonth: 'This month',
-  scopeAllYear: 'All 2026',
   featuredEyebrow: 'Featured',
-  /** Shown when a chosen month has no events — an invitation, not a dead end. */
-  emptyMonth: {
-    headline: 'Nothing scheduled this month',
-    body: 'Switch to All 2026 to see the full year of gatherings.',
+  /**
+   * The Events list's three sections. The first is a highlight, not a date
+   * range: it holds whatever is happening today, or — on an ordinary day —
+   * the single next event.
+   */
+  /** The countdown seal on the highlighted event. */
+  countdown: {
+    day: 'day',
+    days: 'days',
+    toGo: 'to go',
+    today: 'Today',
   },
-  /** Shown when a single day is selected and holds no event. */
-  emptyDay: {
-    headline: 'No gathering on this day',
-    body: 'Pick another date, or browse the months around it.',
+  sections: {
+    upcoming: 'Coming up',
+    upcomingEyebrow: 'Later this season',
   },
-  clearDayFilter: 'Show the whole month',
+  /**
+   * The two views inside the Events tab, switched from the screen's eyebrow.
+   * Each brings its own subtitle so the header always says what is below it.
+   */
+  tabs: {
+    current: {
+      label: 'Gatherings',
+      subtitle:
+        'Garba nights, Diwali celebrations, picnics, and the small get-togethers in between.',
+    },
+    past: {
+      label: 'Past events',
+      subtitle: 'This year’s gatherings so far, most recent first.',
+    },
+  },
+  emptyPast: {
+    headline: 'Nothing in the archive yet',
+    body: 'Once this season’s first gathering has passed, it will be kept here.',
+  },
+  /** Shown in place of the highlight and upcoming list once the year is done. */
+  allPast: {
+    headline: 'The year’s gatherings have wrapped',
+    body: 'Next season’s calendar will appear here as soon as it’s set. This year’s are under Past events.',
+  },
   detail: {
     /** Forward-looking, not an apology, for events still being planned. */
     descriptionFallback: 'Details are still being finalised. Check back soon.',
@@ -75,7 +102,8 @@ export const EVENTS_COPY = {
     viewOnWebsite: 'View on website',
     notFound: {
       headline: 'We couldn’t find that event',
-      body: 'It may have been moved. Browse the full calendar to find it.',
+      body: 'It may have been moved. Browse the full list to find it.',
+      back: 'Back to all events',
     },
   },
 } as const;
@@ -167,7 +195,7 @@ export const YOUTH_COPY = {
   hours: {
     eyebrow: 'Volunteer hours',
     headline: 'Every hour, on the record',
-    body: 'Hours are logged and kept current in the association’s shared record — the same one schools and scout troops ask for.',
+    body: 'Hours are logged and kept current in the association’s shared record, the same one schools and scout troops ask for.',
     /** The primary action. Opens the record in the in-app browser. */
     action: 'View volunteer hours',
     /** Announced to screen readers so the destination is not a surprise. */
@@ -238,11 +266,11 @@ export const MEMBERSHIP_COPY = {
       agreement: 'Please confirm you agree to the by-laws.',
     },
     /** Subject line of the composed email. `{name}` is replaced. */
-    subject: 'Membership renewal — {name}',
+    subject: 'Membership renewal: {name}',
   },
   done: {
     title: 'Almost there',
-    body: 'Your renewal is written out in your mail app — press Send to deliver it to the board. Then complete your payment via Zelle to confirm your membership.',
+    body: 'Your renewal is written out in your mail app. Press Send to deliver it to the board, then complete your payment via Zelle to confirm your membership.',
     zelleTitle: 'Pay via Zelle',
     zelleBody: 'Zelle is available in your online banking app. Send your dues to',
     noMailApp:
@@ -279,7 +307,7 @@ export const CONTACT_COPY = {
   },
   done: {
     title: 'Ready to send',
-    body: 'Your message is waiting in your mail app — press Send and the board will get back to you.',
+    body: 'Your message is waiting in your mail app. Press Send and the board will get back to you.',
     noMailApp:
       'We couldn’t open a mail app on this device. Please write to the board directly at',
     again: 'Write another message',
