@@ -13,7 +13,7 @@ import { createQueryClient } from '@/services/queryClient';
 import { ThemeProvider, lightTheme } from '@/theme';
 
 // Hold the native splash until fonts resolve, so the first frame the user sees
-// is already set in Fraunces rather than reflowing from the system font.
+// is already set in Poppins rather than reflowing from the system font.
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {

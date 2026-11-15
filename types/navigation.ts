@@ -18,8 +18,8 @@ export type TabBarProps = Parameters<
 /** Icon names available to the tab bar, narrowed to the Feather set. */
 export type FeatherIconName = ComponentProps<typeof Feather>['name'];
 
-/** The five Phase-1 tab routes, as file names under `app/(tabs)/`. */
-export type TabRouteName = 'index' | 'events' | 'board' | 'youth' | 'more';
+/** The five tab routes, as names under `app/(tabs)/`. */
+export type TabRouteName = 'index' | 'events' | 'tickets' | 'members' | 'more';
 
 export type TabDefinition = {
   /** Must match the route file name inside `app/(tabs)/`. */

@@ -20,15 +20,8 @@ type PrimaryButtonProps = {
 };
 
 /**
- * The app's filled gold control — the one thing a screen asks someone to do.
- *
- * Extracted from `VolunteerHoursCard` once the membership and contact forms
- * needed the same control, so the rule it encodes lives in one place: the fill
- * is `primary` with `textPrimary` type, not the `primaryContrast` white the
- * token pairing suggests. White on marigold measures about 2.9:1, under the
- * 4.5:1 floor at this size; ink on gold measures about 7.4:1.
- *
- * Spend it once per screen. A second filled button dilutes both.
+ * The app's filled crimson pill — the one thing a screen asks someone to do.
+ * Spend it once per screen.
  */
 export function PrimaryButton({
   label,
@@ -67,10 +60,10 @@ export function PrimaryButton({
           theme.typography.bodyLg,
           styles.label,
           {
-            color: theme.colors.textPrimary,
+            color: theme.colors.primaryContrast,
             // Guarded on `fontsLoaded` the same way the type scale is, so the
             // label is never blank on first paint.
-            fontFamily: theme.fontsLoaded ? fontFamilies.sansSemiBold : undefined,
+            fontFamily: theme.fontsLoaded ? fontFamilies.medium : undefined,
           },
         ]}
       >
@@ -80,7 +73,7 @@ export function PrimaryButton({
         <Feather
           name={icon}
           size={18}
-          color={theme.colors.textPrimary}
+          color={theme.colors.primaryContrast}
           style={{ marginLeft: theme.spacing.sm }}
         />
       ) : null}
@@ -95,6 +88,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   label: {
-    fontWeight: '600',
+    fontWeight: '500',
   },
 });

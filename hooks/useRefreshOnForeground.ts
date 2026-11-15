@@ -1,21 +1,13 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { format } from 'date-fns';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { AppState } from 'react-native';
 
 import { queryKeys } from '@/services';
 
-const currentDay = (): string => format(new Date(), 'yyyy-MM-dd');
-
 /**
- * Re-fetches events when the app returns to the foreground, and whenever the
- * calendar day changes.
- *
- * This is the second half of the midnight-staleness fix. `useCalendarDay`
- * makes the *derivation* re-run when the date rolls over; this makes the
- * *data* fresh again, so a member who leaves the app open on Sunday and opens
- * their phone on Monday sees the calendar re-evaluated rather than a snapshot
- * of yesterday.
+ * Re-fetches the time-sensitive collections when the app returns to the
+ * foreground, so a member who opens their phone after a few days sees the
+ * latest programmes and announcements rather than a snapshot from last time.
  *
  * Invalidating rather than refetching directly means React Query only does
  * work for queries that are actually mounted, and the existing cache keeps
@@ -25,34 +17,16 @@ const currentDay = (): string => format(new Date(), 'yyyy-MM-dd');
  */
 export function useRefreshOnForeground(): void {
   const queryClient = useQueryClient();
-  const lastDayRef = useRef(currentDay());
 
   useEffect(() => {
-    const invalidateEvents = () => {
-      void queryClient.invalidateQueries({ queryKey: queryKeys.events.all });
-    };
-
     const subscription = AppState.addEventListener('change', (state) => {
       if (state !== 'active') {
         return;
       }
-      lastDayRef.current = currentDay();
-      invalidateEvents();
+      void queryClient.invalidateQueries({ queryKey: queryKeys.events.all });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.announcements.all });
     });
 
-    // Covers the app being left open across midnight, where no foreground
-    // transition ever fires.
-    const interval = setInterval(() => {
-      const today = currentDay();
-      if (today !== lastDayRef.current) {
-        lastDayRef.current = today;
-        invalidateEvents();
-      }
-    }, 60 * 1000);
-
-    return () => {
-      clearInterval(interval);
-      subscription.remove();
-    };
+    return () => subscription.remove();
   }, [queryClient]);
 }

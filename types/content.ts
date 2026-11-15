@@ -19,37 +19,34 @@
  * Events
  * ------------------------------------------------------------------ */
 
-export const EVENT_CATEGORIES = [
-  'cultural',
-  'social',
-  'wellness',
-  'youth',
-  'governance',
-  'religious',
-] as const;
-
-export type EventCategory = (typeof EVENT_CATEGORIES)[number];
-
+/**
+ * An SFVGA programme, as the Base44 web app lists it.
+ *
+ * These are the association's recurring programmes — Sanskriti Divas,
+ * Navratri & Garba, and so on — not individually ticketed dates, so the date
+ * is display text ("September 13, 2026", "Spring 2026", "Past Events") rather
+ * than an ISO-8601 value. Nothing here is derived from the clock.
+ */
 export type EventItem = {
   /** Stable slug, e.g. `sanskriti-divas`. */
   id: string;
+  /** Programme name. */
   title: string;
-  /** ISO-8601 date (or date-time) the event begins. */
-  startDate: string;
-  /** ISO-8601 end, or `null` for a single-day event. */
-  endDate: string | null;
-  allDay: boolean;
-  /** Display time, e.g. "6:00 PM". `null` when unknown or all-day. */
-  startTime: string | null;
-  endTime: string | null;
+  /** Short overline, e.g. "Flagship Cultural Night". */
+  tag: string;
+  description: string;
+  /** One-line invitation shown on Home. `null` for events Home never features. */
+  teaser: string | null;
+  /** When it next happens, as the association words it. */
+  dateLabel: string;
+  /** Venue town, e.g. "Chatsworth, CA". `null` falls back to the Valley. */
   location: string | null;
-  description: string | null;
-  /** Remote URL or bundled asset path. `null` until artwork exists. */
+  /** Remote URL or bundled asset key. `null` renders no picture. */
   heroImage: string | null;
-  /** Canonical page on sfvga.org — the source of truth for unfilled fields. */
-  sourceUrl: string;
+  /** The event Home highlights under "Upcoming Event". */
   isFeatured: boolean;
-  category: EventCategory;
+  /** Ascending display order. */
+  order: number;
 };
 
 /* ------------------------------------------------------------------ *

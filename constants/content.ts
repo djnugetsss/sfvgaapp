@@ -1,13 +1,12 @@
-import type { EventCategory, ResourceKind } from '@/types/content';
-import type { FeatherIconName, TabRouteName } from '@/types/navigation';
-import type { EventStatus } from '@/utils/eventStatus';
+import type { FeatherIconName } from '@/types/navigation';
 
 /**
  * Screen chrome copy — headers, labels, and status messages.
  *
  * This is UI text, not content. Content (events, board members,
- * announcements) comes from `@/services` and never appears here or in a
- * component.
+ * announcements, dues, roles) comes from `@/services` and never appears here
+ * or in a component. The wording below is the Base44 web app's, screen by
+ * screen.
  */
 
 /**
@@ -26,238 +25,110 @@ export const STATUS_COPY = {
   error: 'We couldn’t load this right now. Please try again later.',
 } as const;
 
-/**
- * Display labels for `EventCategory`. Keyed by the union so adding a category
- * to the domain type fails the build here until it has a label.
- */
-export const CATEGORY_LABELS: Record<EventCategory, string> = {
-  cultural: 'Cultural',
-  social: 'Social',
-  wellness: 'Wellness',
-  youth: 'Youth',
-  governance: 'Governance',
-  religious: 'Religious',
-};
-
-/**
- * Labels for derived event status. Only past gets a visible tag — marking
- * every upcoming event "Upcoming" would be noise, since upcoming is the
- * default state of the calendar.
- */
-export const STATUS_LABELS: Record<EventStatus, string | null> = {
-  past: 'Completed',
-  today: 'Today',
-  upcoming: null,
-};
-
-/** Events screen and event detail. */
-export const EVENTS_COPY = {
-  featuredEyebrow: 'Featured',
-  /**
-   * The Events list's three sections. The first is a highlight, not a date
-   * range: it holds whatever is happening today, or — on an ordinary day —
-   * the single next event.
-   */
-  /** The countdown seal on the highlighted event. */
-  countdown: {
-    day: 'day',
-    days: 'days',
-    toGo: 'to go',
-    today: 'Today',
-  },
-  sections: {
-    upcoming: 'Coming up',
-    upcomingEyebrow: 'Later this season',
-  },
-  /**
-   * The two views inside the Events tab, switched from the screen's eyebrow.
-   * Each brings its own subtitle so the header always says what is below it.
-   */
-  tabs: {
-    current: {
-      label: 'Gatherings',
-      subtitle:
-        'Garba nights, Diwali celebrations, picnics, and the small get-togethers in between.',
-    },
-    past: {
-      label: 'Past events',
-      subtitle: 'This year’s gatherings so far, most recent first.',
-    },
-  },
-  emptyPast: {
-    headline: 'Nothing in the archive yet',
-    body: 'Once this season’s first gathering has passed, it will be kept here.',
-  },
-  /** Shown in place of the highlight and upcoming list once the year is done. */
-  allPast: {
-    headline: 'The year’s gatherings have wrapped',
-    body: 'Next season’s calendar will appear here as soon as it’s set. This year’s are under Past events.',
-  },
-  detail: {
-    /** Forward-looking, not an apology, for events still being planned. */
-    descriptionFallback: 'Details are still being finalised. Check back soon.',
-    whenLabel: 'When',
-    whereLabel: 'Where',
-    locationFallback: 'Venue to be announced',
-    viewOnWebsite: 'View on website',
-    notFound: {
-      headline: 'We couldn’t find that event',
-      body: 'It may have been moved. Browse the full list to find it.',
-      back: 'Back to all events',
-    },
-  },
+/** The header every tab shares. */
+export const HEADER_COPY = {
+  name: 'San Fernando Valley Gujarati Association',
+  logoLabel: 'SFVGA — San Fernando Valley Gujarati Association',
+  notifications: 'Notifications',
+  notificationsHint: 'Opens the latest updates from the board',
+  viewAll: 'View all updates',
+  close: 'Close',
+  back: 'Back',
 } as const;
 
 /** Home screen. */
 export const HOME_COPY = {
-  nextGathering: {
-    eyebrow: 'Next gathering',
-    /** When the whole calendar is behind us. */
-    emptyHeadline: 'The year’s gatherings have wrapped',
-    emptyBody: 'Next season’s calendar will appear here as soon as it’s set.',
+  community: {
+    eyebrow: 'Our Community',
+    body: 'One place for the gatherings, people, and traditions that hold our community together across the San Fernando Valley.',
+    imageAlt: 'SFVGA members at an association gathering',
   },
-  featured: {
-    eyebrow: 'Flagship celebration',
+  upcoming: {
+    eyebrow: 'Upcoming Event',
+    action: 'Register & View Details',
+    emptyHeadline: 'The calendar is being set',
+    emptyBody: 'The next event will appear here as soon as the board confirms it.',
   },
-  /**
-   * The band under the hero. Only the alt text lives here — the artwork is
-   * addressed by key from `@/constants/assets`.
-   */
-  banner: {
-    alt: 'The SFVGA banner hung at an association gathering in the park',
+  updates: {
+    eyebrow: 'Latest Updates',
+    title: 'Membership 2026 Open',
+    body: 'Renew your membership or invite new members to join our vibrant community.',
+    action: 'Renew Membership',
   },
-  announcements: {
-    eyebrow: 'Announcements',
-    emptyHeadline: 'News from the board lands here',
-    emptyBody:
-      'Invitations, reminders, and updates from the committee will appear on this screen first.',
-  },
-  browseAll: 'Browse all events',
-} as const;
-
-/**
- * More hub — the thali.
- *
- * `RESOURCE_DISPLAY` re-voices each resource as the thing a person gets
- * ("Read the by-laws") rather than the thing the system stores ("Association
- * By-Laws"), and pairs it with an icon. It is keyed by `ResourceKind`, so a
- * new kind fails the build here until it has a label.
- *
- * This is presentation, not content: the URL and the canonical label still
- * come from `@/services`, and a resource whose kind is unmapped falls back to
- * the label the data provides.
- */
-export const RESOURCE_DISPLAY: Record<
-  ResourceKind,
-  { label: string; icon: FeatherIconName }
-> = {
-  mission: { label: 'Mission & roles', icon: 'compass' },
-  membership: { label: 'Membership', icon: 'user-plus' },
-  donation: { label: 'Support SFVGA', icon: 'heart' },
-  bylaws: { label: 'Read the by‑laws', icon: 'file-text' },
-  minutes: { label: 'Meeting minutes', icon: 'clipboard' },
-  external: { label: 'Visit the website', icon: 'external-link' },
-};
-
-/**
- * The order the thali is served in, clockwise from the top. Membership leads
- * because it is the one action the association most wants a visitor to take —
- * and it is the segment that spends this screen's single kumkum allowance.
- */
-export const RESOURCE_ORDER: readonly ResourceKind[] = [
-  'membership',
-  'donation',
-  'minutes',
-  'bylaws',
-  'mission',
-];
-
-/**
- * Youth screen.
- *
- * **One intro, and only one.** The screen used to open with the scaffold
- * subtitle *and* a body paragraph beneath it, split by a rule. Two blocks of
- * prose saying much the same thing filled the top half of the page and pushed
- * the hours card — the reason the screen exists — off the first screen
- * entirely. The subtitle is now the whole introduction; there is no `intro`
- * field to add a second one back into. Anything more to say about the youth
- * belongs in the hours record this screen links to, not above it.
- *
- * What copy is here stays evergreen — no counts, no names, no year. Those live
- * in the linked record, which is maintained; anything restated here would go
- * stale the week after it shipped.
- */
-export const YOUTH_COPY = {
-  /** Alt text for the service photograph below the intro. */
-  banner: {
-    alt: 'SFVGA youth volunteers packing meals at a Valley food bank',
-  },
-  hours: {
-    eyebrow: 'Volunteer hours',
-    headline: 'Every hour, on the record',
-    body: 'Hours are logged and kept current in the association’s shared record, the same one schools and scout troops ask for.',
-    /** The primary action. Opens the record in the in-app browser. */
-    action: 'View volunteer hours',
-    /** Announced to screen readers so the destination is not a surprise. */
-    actionHint: 'Opens the volunteer hours record',
-    /** Shown in place of the button when no usable link exists yet. */
-    unavailable:
-      'The hours record is being prepared. It will open from here as soon as it is published.',
-  },
-  /** The secondary card under the hours record. */
-  cpr: {
-    eyebrow: 'Life skills',
-    headline: 'CPR training',
-    body: 'CPR training organized by SFVGA, equipping our youth with life-saving skills.',
-    imageAlt: 'SFVGA youth practising CPR at an association training session',
-    action: 'See the training photos',
-    actionHint: 'Opens the CPR training photo album',
+  moments: {
+    eyebrow: 'Community Moments',
+    alt: 'Photographs from SFVGA gatherings',
+    previous: 'Previous photo',
+    next: 'Next photo',
   },
 } as const;
 
-export const MORE_COPY = {
-  emptyHeadline: 'The plate is still being set',
-  emptyBody:
-    'Membership, giving, and our governing documents will be linked here shortly.',
-  /** Announced for the mark at the centre of the arrangement. */
-  thaliLabel: 'SFVGA',
-  /** The compartment for the in-app contact page, which has no resource row. */
-  contact: { label: 'Contact & FAQ', icon: 'mail' as FeatherIconName },
-  /** Back-control label on every page pushed from the thali. */
-  backLabel: 'More',
+/** Events list and event detail. */
+export const EVENTS_COPY = {
+  viewDetails: 'View Details',
+  /** Detail-page venue when an event names no town. */
+  fallbackLocation: 'San Fernando Valley',
+  empty: {
+    headline: 'No events listed yet',
+    body: 'When the committee publishes the season’s programmes, they land here first.',
+  },
+  notFound: {
+    headline: 'Event not found',
+    body: 'This event is no longer listed. Browse all upcoming events instead.',
+    action: 'Back to all events',
+  },
 } as const;
 
-/* ------------------------------------------------------------------ *
- * Pages under More
- * ------------------------------------------------------------------ */
+/** Members tab — dues, renewal and the Youth Corner. */
+export const MEMBERS_COPY = {
+  resources: {
+    eyebrow: 'Member Resources',
+    /** Followed by the board inbox, which is styled separately. */
+    intro:
+      'Current members are requested to be active and invite new members to enjoy the benefits. Membership dues via Zelle to',
+    empty: 'This year’s dues will be listed here as soon as the board confirms them.',
+  },
+  renewal: {
+    icon: 'refresh-cw' as FeatherIconName,
+    title: 'Membership Renewal',
+    body: 'Review the terms and conditions and renew your membership online.',
+    action: 'Renew Membership',
+  },
+  youth: {
+    eyebrow: 'Youth Corner',
+    body: 'SFVGA’s youth initiatives build leadership, community service, and life skills.',
+    cpr: {
+      title: 'CPR Training',
+      body: 'CPR training organized by SFVGA, equipping our youth with life-saving skills.',
+      imageAlt: 'SFVGA youth CPR training',
+      action: 'CPR Training Pictures',
+      actionHint: 'Opens the CPR training photo album',
+    },
+    hours: {
+      title: 'Volunteer Hours',
+      body: 'Track community service hours contributed by SFVGA youth members.',
+      imageAlt: 'SFVGA volunteer hours',
+      action: 'Review Volunteer Hours Log',
+      actionHint: 'Opens the volunteer hours record',
+    },
+  },
+} as const;
 
-/** Membership — dues, how to pay, and online renewal. */
+/** Membership renewal form (pushed from the Members tab). */
 export const MEMBERSHIP_COPY = {
-  eyebrow: 'Membership',
-  title: 'Join & renew',
-  subtitle:
-    'Current members are asked to stay active and invite new families to enjoy the benefits.',
-  dues: {
-    eyebrow: 'Annual dues',
-    title: 'Membership plans',
-    /** Rendered before the board inbox, which is styled separately. */
-    payVia: 'Pay dues via Zelle to',
-  },
-  join: {
-    eyebrow: 'New members',
-    body: 'New families, and members whose details have changed, apply through the full membership form on sfvga.org.',
-    action: 'Apply on sfvga.org',
-  },
   renew: {
-    eyebrow: 'Existing members',
-    title: 'Renew online',
-    body: 'If you are an existing member and nothing about your family has changed, renew here.',
-    nameLabel: 'Full name',
+    eyebrow: 'Renew Membership',
+    /** The sentence before the apply link. */
+    intro:
+      'Renew your membership below if you are an existing member and there is no change to your information. New members and members with updates please',
+    applyLink: 'click here to apply on the sfvga.org website',
+    nameLabel: 'Full Name',
     emailLabel: 'Email',
     planLabel: 'Membership type',
-    agreement: 'I have reviewed and agree to the SFVGA Association By-Laws and Terms & Conditions.',
+    agreement:
+      'I have reviewed and agree to the SFVGA Association By-Laws and Terms & Conditions.',
     bylawsLink: 'Read the by-laws',
-    submit: 'Submit renewal',
+    submit: 'Submit Renewal',
     submitHint: 'Opens your mail app with the renewal written out for you to send',
     errors: {
       name: 'Please enter your full name.',
@@ -269,34 +140,28 @@ export const MEMBERSHIP_COPY = {
     subject: 'Membership renewal: {name}',
   },
   done: {
-    title: 'Almost there',
+    title: 'Thank you for renewing!',
     body: 'Your renewal is written out in your mail app. Press Send to deliver it to the board, then complete your payment via Zelle to confirm your membership.',
     zelleTitle: 'Pay via Zelle',
     zelleBody: 'Zelle is available in your online banking app. Send your dues to',
     noMailApp:
       'We couldn’t open a mail app on this device. Please email your renewal to the address below, and pay via Zelle to the same address.',
     again: 'Start another renewal',
-  },
-  empty: {
-    headline: 'Plans are being finalised',
-    body: 'This year’s dues will be listed here as soon as the board confirms them.',
+    back: 'Back to Members',
   },
 } as const;
 
-/** Contact & FAQ. */
+/** Contact tab. */
 export const CONTACT_COPY = {
   eyebrow: 'Contact',
-  title: 'Get in touch',
-  subtitle:
-    'Review the questions below, and write to the board for membership and general inquiries.',
+  intro: 'Review the FAQ below and contact us for membership & general inquiries.',
   form: {
-    eyebrow: 'Write to the board',
     nameLabel: 'Name',
     emailLabel: 'Email',
     subjectLabel: 'Subject',
     subjectPlaceholder: 'Optional',
     messageLabel: 'Message',
-    submit: 'Send message',
+    submit: 'Send Message',
     submitHint: 'Opens your mail app with the message ready to send',
     defaultSubject: 'Message from the SFVGA app',
     errors: {
@@ -306,145 +171,110 @@ export const CONTACT_COPY = {
     },
   },
   done: {
-    title: 'Ready to send',
-    body: 'Your message is waiting in your mail app. Press Send and the board will get back to you.',
+    title: 'Thank you!',
+    body: 'Your message is waiting in your mail app. Press Send and the board will get back to you shortly.',
     noMailApp:
       'We couldn’t open a mail app on this device. Please write to the board directly at',
-    again: 'Write another message',
+    again: 'Send another message',
   },
   faq: {
     eyebrow: 'FAQs',
-    title: 'Common questions',
-  },
-} as const;
-
-/** Mission & roles. */
-export const ABOUT_COPY = {
-  eyebrow: 'Our association',
-  title: 'Mission & roles',
-  subtitle: 'Why SFVGA exists, how it carries that out, and who does what.',
-  mission: {
-    eyebrow: 'Mission',
-    title: 'Our mission',
-    pointsTitle: 'How SFVGA accomplishes its mission',
-  },
-  boardRoles: {
-    eyebrow: 'Governance',
-    title: 'Board roles',
-    body: 'Board members are elected annually, each with defined responsibilities.',
-  },
-  committeeRoles: {
-    eyebrow: 'Events',
-    title: 'Event committee roles',
-    body: 'Every event is run by a committee of members, each in one of these roles.',
-  },
-  join: 'Become a member',
-  empty: {
-    headline: 'This page is being written',
-    body: 'The mission and role descriptions will appear here shortly.',
-  },
-} as const;
-
-/** Meeting minutes, AGMs, and by-laws. */
-export const RECORDS_COPY = {
-  eyebrow: 'Governance',
-  title: 'Records',
-  subtitle: 'Official meeting minutes, annual general meeting records, and the association by-laws.',
-  groups: {
-    minutes: 'Board meeting minutes',
-    agm: 'Annual general meetings',
-  },
-  open: 'Open',
-  archive: 'View the full archive',
-  archiveUrl: 'https://sfvga.org/board/meeting-minutes-archive',
-  bylaws: {
-    eyebrow: 'By-laws',
-    title: 'Governance & by-laws',
-    body: 'The association’s by-laws set out how SFVGA is run. Every member agrees to them on joining.',
-    action: 'Read the by-laws',
-  },
-  empty: {
-    headline: 'No records published yet',
-    body: 'Minutes are added here after each board meeting is approved.',
-  },
-} as const;
-
-/** The extended-leadership section beneath the board. */
-export const LEADERSHIP_COPY = {
-  eyebrow: 'Champions',
-  title: 'Extended leadership',
-  body: 'Community members who support SFVGA’s mission through their specialized roles.',
-} as const;
-
-/** Home's Community Moments band. */
-export const GALLERY_COPY = {
-  eyebrow: 'Community moments',
-  alt: 'Photographs from SFVGA gatherings',
-} as const;
-export type ScreenCopy = {
-  readonly eyebrow: string;
-  readonly title: string;
-  readonly subtitle: string;
-  readonly empty: {
-    readonly headline: string;
-    readonly body: string;
-  };
-};
-
-export const SCREEN_COPY: Record<TabRouteName, ScreenCopy> = {
-  index: {
-    eyebrow: 'San Fernando Valley Gujarati Association',
-    title: 'Welcome home.',
-    subtitle:
-      'One place for the gatherings, people, and traditions that hold our community together across the Valley.',
-    empty: {
-      headline: 'Your feed is being prepared',
-      body: 'Announcements, upcoming gatherings, and community highlights will appear here.',
-    },
-  },
-  events: {
-    eyebrow: 'Gatherings',
-    title: 'Events',
-    subtitle:
-      'Garba nights, Diwali celebrations, picnics, and the small get-togethers in between.',
-    empty: {
-      headline: 'No events scheduled yet',
-      body: 'When the committee publishes the season calendar, every date lands here first.',
-    },
+    title: 'Common Questions',
   },
   board: {
     eyebrow: 'Leadership',
-    title: 'The Board',
-    subtitle:
-      'The volunteers who plan the year, steward the funds, and answer the phone at 9pm.',
-    empty: {
-      headline: 'Board directory coming soon',
-      body: 'Roles, terms, and the best way to reach each member will be listed here.',
-    },
+    title: 'Board of Directors',
+    body: 'The volunteers who plan the year, steward the funds, and answer the phone at 9pm.',
+    empty: 'The board directory will be listed here shortly.',
   },
-  youth: {
-    eyebrow: 'Next generation',
-    title: 'Youth',
-    /**
-     * Youth's *only* prose. Held to two lines on a standard device, because
-     * everything below it — the photograph and the hours card — has to fit on
-     * the first screen. See the note on `YOUTH_COPY`.
-     */
-    subtitle:
-      'The young volunteers who show up early, stay late, and carry this association.',
-    empty: {
-      headline: 'Programs are taking shape',
-      body: 'Sign-ups, practice schedules, and volunteer opportunities will be published here.',
-    },
+  extended: {
+    eyebrow: 'Champions',
+    title: 'Extended Leadership',
+    body: 'Dedicated community members who support SFVGA’s mission through their specialized roles.',
   },
-  more: {
-    eyebrow: 'Association',
-    title: 'More',
-    subtitle:
-      'Membership, donations, our history, and the ways to get in touch with us.',
-    empty: {
-      headline: 'Nothing here yet',
-      body: 'Links to membership, giving, and contact details are arriving in the next release.',
-    },
+} as const;
+
+/** Tickets tab — the wallet layout from the Codex build. */
+export const TICKETS_COPY = {
+  title: 'My tickets',
+  segments: [
+    { value: 'upcoming', label: 'Upcoming', accessibilityLabel: 'Upcoming tickets' },
+    { value: 'past', label: 'Past', accessibilityLabel: 'Past tickets' },
+  ] as const,
+  empty: {
+    upcoming: 'Approved tickets will appear here. Check your event for registration status.',
+    past: 'Past event tickets will appear here.',
   },
-};
+  emptyTitle: 'No tickets yet',
+  browse: 'Browse Events',
+  status: {
+    valid: 'Ready',
+    redeemed: 'Checked In',
+    revoked: 'No longer valid',
+    past: 'Past event',
+  },
+  hint: { open: 'Tap to view QR', past: 'View ticket history', revoked: 'This ticket is no longer valid' },
+} as const;
+
+/** Community notes (announcements feed) on Home and its full list. */
+export const NOTES_COPY = {
+  eyebrow: 'Community Notes',
+  seeAll: 'See all',
+  listTitle: 'Community Notes',
+  empty: { title: 'No community notes yet', body: 'Updates will appear here.' },
+} as const;
+
+/** Privacy & help rows at the foot of More. */
+export const LEGAL_COPY = {
+  eyebrow: 'Privacy & Help',
+  site: 'https://sfvga-cabe6.web.app',
+  links: [
+    { label: 'Privacy notice', path: '/privacy.html' },
+    { label: 'Terms of use', path: '/terms.html' },
+  ] as const,
+} as const;
+
+/** More tab — mission, roles, minutes and by-laws on one page. */
+export const MORE_COPY = {
+  eyebrow: 'Association',
+  title: 'More',
+  subtitle: 'Our mission, the people behind it, governance records, and how to get in touch.',
+  /** The four quick-link tiles, in order. `id` is also the section's anchor. */
+  sections: [
+    { id: 'mission', label: 'Mission', icon: 'compass' },
+    { id: 'roles', label: 'Roles', icon: 'users' },
+    { id: 'minutes', label: 'Meeting Minutes', icon: 'clipboard' },
+    { id: 'bylaws', label: 'By Laws', icon: 'file-text' },
+    { id: 'contact', label: 'Contact', icon: 'phone' },
+    { id: 'legal', label: 'Privacy & Help', icon: 'shield' },
+  ] as readonly { id: SectionId; label: string; icon: FeatherIconName }[],
+  mission: {
+    title: 'Our Mission',
+    pointsTitle: 'How SFVGA Accomplishes Its Mission',
+    join: 'Become a Member',
+  },
+  roles: {
+    title: 'Board Roles & Responsibilities',
+    body: 'Seven board members are elected annually, each with defined responsibilities.',
+    committeeTitle: 'Event Committee Roles',
+  },
+  minutes: {
+    title: 'Board Meeting Minutes',
+    body: 'Official meeting minutes and annual general meeting records.',
+    groups: {
+      minutes: 'Meeting Minutes',
+      agm: 'AGM',
+    },
+    open: 'View',
+    archive: 'View Archives',
+    archiveUrl: 'https://sfvga.org/board/meeting-minutes-archive',
+  },
+  bylaws: {
+    title: 'Governance & By-Laws',
+    body: 'Association by-laws and governance details are available for review.',
+    action: 'Download By-Laws',
+  },
+  empty: 'This section will be filled in shortly.',
+} as const;
+
+export type SectionId = 'mission' | 'roles' | 'minutes' | 'bylaws' | 'contact' | 'legal';

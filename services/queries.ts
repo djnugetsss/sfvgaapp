@@ -1,7 +1,6 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import { useCalendarDay } from '@/hooks/useCalendarDay';
 import { contentRepository } from '@/services/repository';
 import type {
   Announcement,
@@ -17,11 +16,6 @@ import type {
   RoleDescription,
   YouthItem,
 } from '@/types';
-import {
-  findNextUpcomingEvent,
-  withEventStatus,
-  type EventWithStatus,
-} from '@/utils/eventStatus';
 
 /**
  * Typed React Query hooks over the repository.
@@ -50,8 +44,6 @@ export const queryKeys = {
     list: () => [...queryKeys.events.all, 'list'] as const,
     byId: (id: string) => [...queryKeys.events.all, 'detail', id] as const,
     featured: () => [...queryKeys.events.all, 'featured'] as const,
-    upcoming: (fromISO: string) =>
-      [...queryKeys.events.all, 'upcoming', fromISO] as const,
   },
   board: {
     all: ['board'] as const,
@@ -95,7 +87,7 @@ const HOUR = 60 * MINUTE;
 export const staleTimes = {
   /** Time-sensitive: a new post should appear without a restart. */
   announcements: 5 * MINUTE,
-  /** The calendar shifts occasionally through the year. */
+  /** The programme list changes a few times a year. */
   events: 30 * MINUTE,
   /** Effectively annual. */
   board: 12 * HOUR,
@@ -119,76 +111,12 @@ export const staleTimes = {
  * Hooks
  * ------------------------------------------------------------------ */
 
-/**
- * The full calendar — every event, past included, ascending by `startDate`.
- *
- * This is the Events screen's source. Nothing here filters by date: a member
- * looking back at Navratri in December must still find it. "Past" is a
- * presentation concern, handled by `useEventsWithStatus`.
- */
+/** Every programme, in the association's own order. The Events screen's source. */
 export function useEvents(): UseQueryResult<EventItem[], Error> {
   return useQuery({
     queryKey: queryKeys.events.list(),
     queryFn: () => contentRepository.getEvents(),
     staleTime: staleTimes.events,
-  });
-}
-
-/**
- * The full calendar with each event's derived `'past' | 'today' | 'upcoming'`
- * status attached — what the Events screen renders from.
- *
- * Still every event; the status only tells the UI how to present each one.
- *
- * Derivation runs through React Query's `select`, so this shares one cache
- * entry with `useEvents()` rather than fetching twice. The selector is keyed
- * on `useCalendarDay()`, which is live state rather than a value read during
- * render — that is what actually triggers a re-render at midnight, so an app
- * left open overnight re-derives instead of keeping yesterday's
- * classifications.
- */
-export function useEventsWithStatus(): UseQueryResult<EventWithStatus[], Error> {
-  const todayKey = useCalendarDay();
-
-  const select = useCallback(
-    (events: EventItem[]) => withEventStatus(events),
-    // `todayKey` is intentionally the only dependency: it is not read in the
-    // body, it exists to rebuild this selector when the date rolls over.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [todayKey],
-  );
-
-  return useQuery({
-    queryKey: queryKeys.events.list(),
-    queryFn: () => contentRepository.getEvents(),
-    staleTime: staleTimes.events,
-    select,
-  });
-}
-
-/**
- * The single event for Home's "next event" slot: the earliest one that has not
- * finished, so an event happening today wins over one next month. `null` when
- * the whole calendar is in the past.
- *
- * Shares the same cache entry as `useEvents()`.
- */
-export function useNextUpcomingEvent(): UseQueryResult<EventItem | null, Error> {
-  const todayKey = useCalendarDay();
-
-  const select = useCallback(
-    (events: EventItem[]) => findNextUpcomingEvent(events),
-    // See `useEventsWithStatus` — this dependency exists to re-derive at
-    // midnight, not because it is read below.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [todayKey],
-  );
-
-  return useQuery({
-    queryKey: queryKeys.events.list(),
-    queryFn: () => contentRepository.getEvents(),
-    staleTime: staleTimes.events,
-    select,
   });
 }
 
@@ -207,26 +135,6 @@ export function useFeaturedEvent(): UseQueryResult<EventItem | null, Error> {
   return useQuery({
     queryKey: queryKeys.events.featured(),
     queryFn: () => contentRepository.getFeaturedEvent(),
-    staleTime: staleTimes.events,
-  });
-}
-
-/**
- * Events from a cutoff forward — a **narrow accessor**, not the default view.
- *
- * Use this only where a date-bounded list is genuinely wanted. The Events
- * screen must use `useEventsWithStatus()` instead: this one drops past events
- * entirely, which would make the completed half of the year unreachable.
- * For Home's single "next event" slot, prefer `useNextUpcomingEvent()`.
- *
- * @param fromISO ISO-8601 cutoff. Pass a *date* (`2026-08-05`) rather than a
- * full timestamp: the value is part of the query key, so a per-millisecond
- * value would mint a new cache entry on every render.
- */
-export function useUpcomingEvents(fromISO: string): UseQueryResult<EventItem[], Error> {
-  return useQuery({
-    queryKey: queryKeys.events.upcoming(fromISO),
-    queryFn: () => contentRepository.getUpcomingEvents(fromISO),
     staleTime: staleTimes.events,
   });
 }

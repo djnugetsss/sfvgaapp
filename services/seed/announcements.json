@@ -1,15 +1,15 @@
 [
   {
     "id": "sanskriti-divas-2026",
-    "title": "Sanskriti Divas: our flagship cultural celebration, September 13",
-    "body": "Join us September 13th for our flagship cultural night, an evening of Gujarati music, dance, and heritage.",
-    "date": "2026-08-05",
-    "linkUrl": "https://sfvga.org/events2026/cultural",
-    "pinned": true
+    "title": "Sanskriti Divas",
+    "body": "Join us September 13th for our flagship cultural night.",
+    "date": "2026-08-28",
+    "linkUrl": null,
+    "pinned": false
   },
   {
     "id": "navratri-passes-2026",
-    "title": "Navratri passes are open",
+    "title": "Navratri Passes",
     "body": "Pass bookings are now open for Navratri & Garba.",
     "date": "2026-08-20",
     "linkUrl": null,
@@ -17,10 +17,10 @@
   },
   {
     "id": "membership-2026",
-    "title": "Membership 2026 is open",
-    "body": "Renew your membership, or invite a family to join our community. Renewals can be started from More → Membership.",
+    "title": "Membership 2026",
+    "body": "Membership renewal is now open for 2026.",
     "date": "2026-08-15",
-    "linkUrl": "https://sfvga.org/membership",
+    "linkUrl": null,
     "pinned": false
   }
 ]

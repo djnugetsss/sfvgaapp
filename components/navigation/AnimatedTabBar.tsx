@@ -81,7 +81,7 @@ function TabItem({
     [press, reduceMotion, theme.motion],
   );
 
-  const color = focused ? theme.colors.primary : theme.colors.textMuted;
+  const color = focused ? theme.colors.primary : theme.colors.accent;
 
   return (
     <Pressable
@@ -102,7 +102,7 @@ function TabItem({
           style={[
             theme.typography.overline,
             styles.label,
-            { color, marginTop: theme.spacing.xs },
+            { color, marginTop: theme.spacing.xs, fontSize: 10, letterSpacing: 1 },
           ]}
         >
           {label}

@@ -26,7 +26,7 @@ export function BulletList({ items }: BulletListProps) {
             style={[
               styles.dot,
               {
-                backgroundColor: theme.colors.primary,
+                backgroundColor: theme.colors.accent,
                 marginRight: theme.spacing.md,
                 // Centres the dot on the first line of body type.
                 marginTop: (theme.typography.body.lineHeight - 6) / 2,

@@ -13,7 +13,7 @@ import { JsonContentRepository } from '@/services/JsonContentRepository';
 // explicit nulls instead of omitted fields.
 //
 // The ordering contract on `ContentRepository` still holds: events ascending
-// by startDate, board by roleOrder, announcements pinned-first.
+// by order, board by roleOrder, announcements pinned-first.
 //
 // One correction to the note this comment used to carry. It advised satisfying
 // that contract with server-side `orderBy` clauses. `FirestoreContentRepository`

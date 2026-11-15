@@ -1,14 +1,12 @@
 import { isValid, parseISO } from 'date-fns';
 
 import {
-  EVENT_CATEGORIES,
   MISSION_ENTRY_KINDS,
   RECORD_GROUPS,
   RESOURCE_KINDS,
   ROLE_SCOPES,
   type Announcement,
   type BoardMember,
-  type EventCategory,
   type EventItem,
   type Faq,
   type GalleryPhoto,
@@ -132,23 +130,6 @@ const readISODate = (
   return value;
 };
 
-const readNullableISODate = (
-  source: Record<string, unknown>,
-  key: string,
-  context: string,
-): string | null => {
-  const value = readNullableString(source, key, context);
-  if (value === null) {
-    return null;
-  }
-  if (!isValid(parseISO(value))) {
-    throw new ContentParseError(
-      `${context}: "${key}" must be an ISO-8601 date or null, received "${value}".`,
-    );
-  }
-  return value;
-};
-
 /**
  * Reads a non-empty array of non-empty strings — a role's responsibilities.
  * An empty list is rejected: a role with nothing under it is a half-entered
@@ -200,17 +181,14 @@ export const parseEventItem = (input: unknown, index: number): EventItem => {
   return {
     id: readString(raw, 'id', context),
     title: readString(raw, 'title', context),
-    startDate: readISODate(raw, 'startDate', context),
-    endDate: readNullableISODate(raw, 'endDate', context),
-    allDay: readBoolean(raw, 'allDay', context),
-    startTime: readNullableString(raw, 'startTime', context),
-    endTime: readNullableString(raw, 'endTime', context),
+    tag: readString(raw, 'tag', context),
+    description: readString(raw, 'description', context),
+    teaser: readNullableString(raw, 'teaser', context),
+    dateLabel: readString(raw, 'dateLabel', context),
     location: readNullableString(raw, 'location', context),
-    description: readNullableString(raw, 'description', context),
     heroImage: readNullableString(raw, 'heroImage', context),
-    sourceUrl: readString(raw, 'sourceUrl', context),
     isFeatured: readBoolean(raw, 'isFeatured', context),
-    category: readUnion<EventCategory>(raw, 'category', EVENT_CATEGORIES, context),
+    order: readNumber(raw, 'order', context),
   };
 };
 

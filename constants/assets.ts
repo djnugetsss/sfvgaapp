@@ -35,28 +35,10 @@ export const LOCAL_IMAGES: Record<string, number> = {
   'leadership/vaishali-mehta.jpg': require('@/assets/images/leadership/vaishali-mehta.jpg'),
   'leadership/rahil-shah.jpg': require('@/assets/images/leadership/rahil-shah.jpg'),
   'leadership/maahi-desai.jpg': require('@/assets/images/leadership/maahi-desai.jpg'),
+  'leadership/ansh-mehta.jpg': require('@/assets/images/leadership/ansh-mehta.jpg'),
 
   /* Youth programme photographs. */
   'youth/cpr-training.jpg': require('@/assets/images/youth/cpr-training.jpg'),
-
-  /* Event heroes. Filenames are the association's own, not slugs — the seed
-     maps event → file, so renaming a photo touches one line there. */
-  'events/dance0.jpg': require('@/assets/images/events/dance0.jpg'),
-  'events/dance4.jpg': require('@/assets/images/events/dance4.jpg'),
-  'events/sfvga-beach-day.jpg': require('@/assets/images/events/sfvga-beach-day.jpg'),
-  'events/sfvga-volleyball.jpg': require('@/assets/images/events/sfvga-volleyball.jpg'),
-
-  /* Screen banners. Neither belongs to a calendar record — the first is
-     generic association branding, the second is food-bank service that matches
-     no single event — so they are addressed by the named keys below rather
-     than through a seed's `heroImage`. */
-  'events/sfvgabanner.jpg': require('@/assets/images/events/sfvgabanner.jpg'),
-  /* Despite the extension this file is actually WebP. Metro bundles it and
-     iOS decodes it fine, so it renders correctly today; the mismatch is
-     flagged for the Phase 7 content-type cleanup. Do not rename it here
-     alone — the filename is the key, so the rename and this line move
-     together. */
-  'events/youthvolunteer.jpg': require('@/assets/images/events/youthvolunteer.jpg'),
 };
 
 /* ------------------------------------------------------------------ *
@@ -72,52 +54,26 @@ export const LOCAL_IMAGES: Record<string, number> = {
 export const BRAND_LOGO: number = require('@/assets/images/brand/sfvga-logo.png');
 
 /* ------------------------------------------------------------------ *
- * Screen banner keys
+ * Photographs taken from the Base44 web app
  * ------------------------------------------------------------------ */
 
 /**
- * The contained band under Home's hero text.
+ * These stay remote on purpose: the web app serves them from the
+ * association's Squarespace site and Base44's media store, and the app points
+ * at the same URLs rather than carrying copies. `resolveImageSource` passes an
+ * `https://` value straight through, so rehosting any of them later is a
+ * change to this file and nothing else.
  *
- * Named here rather than written into the screen for the same reason as the
- * Sanskriti thumbnail: components address artwork by key, so Phase 7 can swap
- * this for a Firestore URL without touching a component. Unmapping the key
- * above degrades the band to nothing rendered.
+ * Event artwork lives in `services/seed/events.json` (`heroImage`).
  */
-export const HOME_BANNER_KEY = 'events/sfvgabanner.jpg';
 
-/** The service photograph between Youth's intro and its hours card. */
-export const YOUTH_BANNER_KEY = 'events/youthvolunteer.jpg';
+/** The picture under Home's "Our Community" introduction. */
+export const HOME_WELCOME_IMAGE_URL =
+  'https://images.squarespace-cdn.com/content/v1/6182dd41e5fdbc615031592a/1636077374216-2T3UGHN9QPDYT0KDUMRD/image-asset.jpeg';
 
-/** The photograph on Youth's CPR-training card. */
+/** The picture on the Members tab's "Volunteer Hours" card. */
+export const YOUTH_HOURS_IMAGE_URL =
+  'https://images.squarespace-cdn.com/content/v1/6182dd41e5fdbc615031592a/5f9a1512-d0c4-4a69-aab2-195c39fd221f/CPRFULL.jpg';
+
+/** The picture on the Members tab's "CPR Training" card — bundled. */
 export const YOUTH_CPR_IMAGE_KEY = 'youth/cpr-training.jpg';
-
-/* ------------------------------------------------------------------ *
- * Sanskriti Divas — the flagship's own artwork
- * ------------------------------------------------------------------ */
-
-/**
- * The single static image for the flagship on the Home strip.
- *
- * Home only, and deliberately not a slideshow frame: a 68pt thumbnail that
- * cycled would read as a glitch, not as a feature.
- */
-export const SANSKRITI_THUMBNAIL_KEY = 'events/dance0.jpg';
-
-/**
- * Frames of the Sanskriti Divas detail-hero slideshow, in display order.
- *
- * `require` cannot take a computed path — Metro resolves it at build time — so
- * every frame is listed explicitly. The order here *is* the rotation order:
- * writing the literal in sequence is what guarantees dance2 precedes dance10,
- * which a string sort of filenames would get wrong.
- *
- * Metro deduplicates identical `require` calls, so a frame that also appears
- * in `LOCAL_IMAGES` above is bundled once, not twice.
- */
-export const SANSKRITI_DANCE_IMAGES: readonly number[] = [
-  require('@/assets/images/events/dance1.jpg'),
-  require('@/assets/images/events/dance2.jpg'),
-  require('@/assets/images/events/dance3.jpg'),
-  require('@/assets/images/events/dance4.jpg'),
-  // Add danceN.jpg here to include it in the Sanskriti Divas hero slideshow.
-];

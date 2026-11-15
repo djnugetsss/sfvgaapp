@@ -5,42 +5,40 @@ import { useTheme } from '@/theme';
 
 type SectionHeaderProps = {
   eyebrow: string;
-  title: string;
+  title?: string;
   body?: string | null;
+  /** Use on the crimson band. */
+  inverse?: boolean;
   style?: ViewStyle;
 };
 
-/**
- * Opens a section partway down a screen: overline, gold tick, serif heading,
- * and an optional line of context. The same voice as `ScreenScaffold`'s header
- * at one size down, so a long screen reads as chapters of one document rather
- * than as a stack of unrelated cards.
- */
-export function SectionHeader({ eyebrow, title, body, style }: SectionHeaderProps) {
+/** Uppercase tracked overline, the 64pt rule, then an optional title and body. */
+export function SectionHeader({ eyebrow, title, body, inverse = false, style }: SectionHeaderProps) {
   const theme = useTheme();
+  const accent = inverse ? theme.colors.primaryContrast : theme.colors.primary;
 
   return (
     <View style={[{ marginBottom: theme.spacing.lg }, style]}>
       <Text
-        style={[
-          theme.typography.overline,
-          { color: theme.colors.textMuted, marginBottom: theme.spacing.sm },
-        ]}
+        accessibilityRole="header"
+        style={[theme.typography.overline, { color: accent, marginBottom: theme.spacing.sm }]}
       >
         {eyebrow}
       </Text>
-      <Rule variant="short" style={{ marginBottom: theme.spacing.md }} />
-      <Text
-        accessibilityRole="header"
-        style={[theme.typography.h2, { color: theme.colors.textPrimary }]}
-      >
-        {title}
-      </Text>
+      <Rule
+        variant="short"
+        style={{ backgroundColor: accent, marginBottom: title || body ? theme.spacing.md : 0 }}
+      />
+      {title ? (
+        <Text style={[theme.typography.h2, { color: inverse ? theme.colors.primaryContrast : theme.colors.textPrimary }]}>
+          {title}
+        </Text>
+      ) : null}
       {body ? (
         <Text
           style={[
             theme.typography.body,
-            { color: theme.colors.textSecondary, marginTop: theme.spacing.sm },
+            { color: inverse ? theme.colors.primaryContrast : theme.colors.textSecondary, marginTop: theme.spacing.sm },
           ]}
         >
           {body}

@@ -3,15 +3,12 @@ import { View, type ViewStyle } from 'react-native';
 import { useTheme } from '@/theme';
 
 type RuleProps = {
-  /**
-   * `full` spans the container; `short` is a 40pt accent tick used to open a
-   * section — the single most-used piece of "jewelry" in the design.
-   */
+  /** `full` spans the container; `short` is the 64pt crimson rule under an overline. */
   variant?: 'full' | 'short';
   style?: ViewStyle;
 };
 
-/** A hairline rule. Editorial layouts live or die on their horizontal rules. */
+/** A hairline rule, or the short crimson rule that opens a section. */
 export function Rule({ variant = 'full', style }: RuleProps) {
   const theme = useTheme();
 
@@ -20,10 +17,10 @@ export function Rule({ variant = 'full', style }: RuleProps) {
       <View
         style={[
           {
-            width: theme.spacing['2xl'],
-            height: 2,
-            borderRadius: theme.radii.full,
+            width: 64,
+            height: 1,
             backgroundColor: theme.colors.primary,
+            opacity: 0.8,
           },
           style,
         ]}
@@ -34,10 +31,7 @@ export function Rule({ variant = 'full', style }: RuleProps) {
   return (
     <View
       style={[
-        {
-          height: theme.layout.hairline,
-          backgroundColor: theme.colors.border,
-        },
+        { height: theme.layout.hairline, backgroundColor: theme.colors.border },
         style,
       ]}
     />

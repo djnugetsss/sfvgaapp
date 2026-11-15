@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { IMAGE_BLURHASH } from '@/constants/images';
 import { useTheme } from '@/theme';
 import type { BoardMember } from '@/types';
 import { resolveImageSource } from '@/utils/imageSource';
@@ -10,7 +11,6 @@ import { resolveImageSource } from '@/utils/imageSource';
  * used for event heroes, so a loading portrait reads as resolving rather than
  * as a hole in the roster.
  */
-const BLURHASH = 'L6PZ%*00-;WB~qofofof00%MofRj';
 
 /** Portrait size. Comfortably above the 44pt floor if it ever becomes tappable. */
 const AVATAR = 64;
@@ -58,7 +58,7 @@ export function BoardMemberRow({ member, isFirst }: BoardMemberRowProps) {
       {photo !== null ? (
         <Image
           source={photo}
-          placeholder={{ blurhash: BLURHASH }}
+          placeholder={{ blurhash: IMAGE_BLURHASH }}
           transition={theme.motion.durations.base}
           contentFit="cover"
           accessibilityLabel={member.name}
@@ -70,6 +70,8 @@ export function BoardMemberRow({ member, isFirst }: BoardMemberRowProps) {
               borderRadius: theme.radii.full,
               marginRight: theme.spacing.md,
               backgroundColor: theme.colors.accentWash,
+              borderWidth: 2,
+              borderColor: theme.colors.primary,
             },
           ]}
         />

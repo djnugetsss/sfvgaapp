@@ -1,4 +1,4 @@
-import { compareAsc, isBefore, parseISO, startOfDay } from 'date-fns';
+import { compareAsc, parseISO } from 'date-fns';
 
 import type { ContentRepository } from '@/services/ContentRepository';
 import {
@@ -52,8 +52,7 @@ import { byOrder, byRoleOrder } from '@/utils/order';
  *    surfaces through the same rejected-promise path React Query already
  *    handles, instead of throwing during app startup.
  *
- * Note on seed content: unfilled fields carry the literal marker
- * "TODO: fill from sourceUrl" (events) or "TODO: rehost headshot" (board).
+ * Note on seed content: unfilled fields may carry a literal "TODO: …" marker.
  * These are values, not nulls, precisely so they are greppable and so a
  * half-populated record cannot masquerade as a complete one.
  *
@@ -81,10 +80,7 @@ export class JsonContentRepository implements ContentRepository {
 
   private async loadEvents(): Promise<EventItem[]> {
     await this.delay();
-    const events = parseCollection(eventsJson, parseEventItem, 'events');
-    return events.sort((a, b) =>
-      compareAsc(parseISO(a.startDate), parseISO(b.startDate)),
-    );
+    return parseCollection(eventsJson, parseEventItem, 'events').sort(byOrder);
   }
 
   async getEvents(): Promise<EventItem[]> {
@@ -98,20 +94,9 @@ export class JsonContentRepository implements ContentRepository {
 
   async getFeaturedEvent(): Promise<EventItem | null> {
     const events = await this.loadEvents();
-    // Already sorted ascending, so `find` yields the earliest flagged event —
-    // a deterministic winner if the data ever flags more than one.
+    // Already sorted by `order`, so `find` yields the first flagged event — a
+    // deterministic winner if the data ever flags more than one.
     return events.find((event) => event.isFeatured) ?? null;
-  }
-
-  async getUpcomingEvents(fromISO: string): Promise<EventItem[]> {
-    const events = await this.loadEvents();
-    // Compare on calendar-day boundaries: an event earlier today is still
-    // "upcoming" to a member checking the app that afternoon.
-    const cutoff = startOfDay(parseISO(fromISO));
-
-    return events.filter(
-      (event) => !isBefore(startOfDay(parseISO(event.startDate)), cutoff),
-    );
   }
 
   async getBoardMembers(): Promise<BoardMember[]> {

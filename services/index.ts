@@ -23,12 +23,9 @@ export {
   useBoardMembers,
   useEvent,
   useEvents,
-  useEventsWithStatus,
   useFeaturedEvent,
-  useNextUpcomingEvent,
   useResource,
   useResources,
-  useUpcomingEvents,
   useYouthHoursResource,
   useYouthItems,
   YOUTH_HOURS_RESOURCE_ID,
@@ -43,15 +40,3 @@ export {
   useYouthCprResource,
   YOUTH_CPR_RESOURCE_ID,
 } from '@/services/queries';
-
-/**
- * Derived event time-status. Exported here so screens get it from the same
- * `@/services` boundary as the data itself.
- */
-export {
-  findNextUpcomingEvent,
-  getEventStatus,
-  withEventStatus,
-  type EventStatus,
-  type EventWithStatus,
-} from '@/utils/eventStatus';

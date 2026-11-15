@@ -46,7 +46,7 @@ export function Checkbox({
         ]}
       >
         {checked ? (
-          <Feather name="check" size={16} color={theme.colors.textPrimary} />
+          <Feather name="check" size={16} color={theme.colors.primaryContrast} />
         ) : null}
       </View>
       <View style={styles.label}>{children}</View>

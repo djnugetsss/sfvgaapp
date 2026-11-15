@@ -1,4 +1,4 @@
-import { compareAsc, format, isBefore, parseISO, startOfDay } from 'date-fns';
+import { compareAsc, format, parseISO } from 'date-fns';
 import {
   collection,
   doc,
@@ -59,15 +59,13 @@ import { byOrder, byRoleOrder } from '@/utils/order';
  * Three decisions are worth stating, because each is a deliberate departure
  * from the obvious Firestore idiom.
  *
- * **1. No `where` filters, ever, in `getEvents`.** The interface documents
- * that past events must be returned; the Events screen de-emphasises them
- * rather than hiding them, and a past event stays openable by deep link. A
- * `where('startDate', '>=', …)` here would be a silent regression that only
- * shows up next year.
+ * **1. No `where` filters in `getEvents`.** The Events screen lists every
+ * programme the association runs, so the whole collection is always wanted. A
+ * filter added here would make a programme vanish from the app without error.
  *
  * **2. No `orderBy` either — sorting happens on the client.** This one reverses
  * the suggestion left in `repository.ts`, and the reason is specific to a
- * hand-edited database: a Firestore query with `orderBy('startDate')` returns
+ * hand-edited database: a Firestore query with `orderBy('order')` returns
  * only documents that *have* a `startDate` field. A typo in the console — an
  * event saved with `startdate` — would vanish from the app with no error
  * anywhere. Fetching the collection whole and sorting here means that document
@@ -211,15 +209,13 @@ export class FirestoreContentRepository implements ContentRepository {
   }
 
   /**
-   * Every event, ascending by `startDate` — past ones included.
+   * Every event, ascending by `order`.
    *
    * See the class note: no `where`, no `orderBy`, on purpose.
    */
   private async loadEvents(): Promise<EventItem[]> {
     const events = await this.readCollection(COLLECTIONS.events, parseEventItem);
-    return events.sort((a, b) =>
-      compareAsc(parseISO(a.startDate), parseISO(b.startDate)),
-    );
+    return events.sort(byOrder);
   }
 
   async getEvents(): Promise<EventItem[]> {
@@ -254,22 +250,9 @@ export class FirestoreContentRepository implements ContentRepository {
 
   async getFeaturedEvent(): Promise<EventItem | null> {
     const events = await this.loadEvents();
-    // Sorted ascending already, so `find` yields the earliest flagged event —
-    // a deterministic winner if the data ever flags more than one.
+    // Sorted by `order` already, so `find` yields the first flagged event — a
+    // deterministic winner if the data ever flags more than one.
     return events.find((event) => event.isFeatured) ?? null;
-  }
-
-  async getUpcomingEvents(fromISO: string): Promise<EventItem[]> {
-    const events = await this.loadEvents();
-    // Calendar-day comparison, matching the JSON implementation: an event
-    // earlier today is still "upcoming" to someone checking that afternoon.
-    // Filtered here rather than in the query so the rule stays in one place
-    // and cannot drift from `getEventStatus`.
-    const cutoff = startOfDay(parseISO(fromISO));
-
-    return events.filter(
-      (event) => !isBefore(startOfDay(parseISO(event.startDate)), cutoff),
-    );
   }
 
   async getBoardMembers(): Promise<BoardMember[]> {

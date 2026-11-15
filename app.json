@@ -8,7 +8,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "backgroundColor": "#FAF6EF",
+    "backgroundColor": "#FFFDFA",
     "ios": {
       "bundleIdentifier": "org.sfvga.app",
       "buildNumber": "1",
@@ -21,9 +21,8 @@
     "android": {
       "package": "org.sfvga.app",
       "adaptiveIcon": {
-        "backgroundColor": "#FAF6EF",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
+        "backgroundColor": "#7B303A",
+        "foregroundImage": "./assets/icon.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false
@@ -42,7 +41,7 @@
           "image": "./assets/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#FAF6EF"
+          "backgroundColor": "#FFFDFA"
         }
       ]
     ],

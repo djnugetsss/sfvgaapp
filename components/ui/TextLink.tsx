@@ -1,7 +1,7 @@
 import Feather from '@expo/vector-icons/Feather';
 import { Pressable, StyleSheet, Text, type ViewStyle } from 'react-native';
 
-import { useTheme } from '@/theme';
+import { fontFamilies, useTheme } from '@/theme';
 import type { FeatherIconName } from '@/types';
 
 type TextLinkProps = {
@@ -43,13 +43,13 @@ export function TextLink({
         style,
       ]}
     >
-      <Text style={[theme.typography.body, { color: theme.colors.primary }]}>
+      <Text style={[theme.typography.body, { color: theme.colors.accent, fontFamily: theme.fontsLoaded ? fontFamilies.medium : undefined }]}>
         {label}
       </Text>
       <Feather
         name={icon}
         size={16}
-        color={theme.colors.primary}
+        color={theme.colors.accent}
         style={{ marginLeft: theme.spacing.sm }}
       />
     </Pressable>
