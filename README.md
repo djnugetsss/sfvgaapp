@@ -65,7 +65,7 @@ near-black text, linen borders) carry roughly 90% of every screen, and the
 marigold `primary` appears only as small jewelry — the accent rule above each
 title, the active tab, a single link. Sienna adds occasional depth.
 
-Type pairs Fraunces (serif, display + headings) with Inter (sans, body).
+Type is Poppins throughout (400/500/600/700). The web app's VAG Rounded wordmark font is proprietary, so Poppins Bold stands in.
 Until the fonts resolve, `createTheme(false)` serves the same scale with system
 fonts, so nothing renders blank or reflows badly.
 
@@ -124,7 +124,7 @@ screen. That holds because the domain types are already storage-shaped:
 - Every repository method is already `async`, so no caller assumes synchrony.
 
 The one obligation on a new implementation is the **ordering contract**
-documented on `ContentRepository`: events ascending by `startDate`, board by
+documented on `ContentRepository`: events by `order`, board by
 `roleOrder`, announcements pinned-first then newest. A Firestore backend should
 satisfy those with server-side `orderBy` rather than re-sorting on the client.
 
@@ -134,69 +134,36 @@ parsers check at runtime and throw `ContentParseError` on bad data. That same
 boundary validates Firestore documents later, and failures surface through the
 rejected-promise path React Query already handles.
 
-### Event time-status is derived, never stored
+### Events are programmes, not dated rows
 
-`utils/eventStatus.ts` classifies each event as `'past' | 'today' | 'upcoming'`
-at runtime from `endDate ?? startDate`. It is **not** in the JSON: a stored
-flag is wrong the moment the clock passes it, whereas a derived one is correct
-by construction with no migration.
+Events follow the Base44 web app: six recurring programmes (Sanskriti Divas,
+Navratri & Garba, Dipotsav / Diwali, Rammat Gammat, Chalo Manek Chowk, Event
+Media Gallery) with a display `dateLabel` such as "September 13, 2026" or
+"Spring 2026". Nothing is derived from the clock, so there is no past/upcoming
+status. Events are ordered by `order`; Home shows the one with `isFeatured`.
+`hooks/useRefreshOnForeground.ts` refetches events and announcements when the
+app returns to the foreground.
 
-It is a *display* state, not a filter. `getEvents()` returns the whole calendar
-— all 10 events, past included — and no default query drops past events, so a
-member can still open Navratri in December. `getUpcomingEvents(fromISO)` and
-`useNextUpcomingEvent()` are narrow accessors for Home's single "next event"
-slot; the Events screen uses `useEventsWithStatus()`.
-
-Comparisons are date-only via date-fns (`startOfDay`, `isSameDay`, `isBefore`,
-`isAfter`) — no manual date math — so an event happening later today reads
-`'today'`, not `'past'`, and the unfilled `startTime` markers cannot affect the
-result. Multi-day events only become `'past'` once `endDate` has passed.
-
-`useEventsWithStatus()` and `useNextUpcomingEvent()` derive through React
-Query's `select`, sharing one cache entry with `useEvents()` instead of
-fetching again.
-
-**Staying correct across midnight** takes two cooperating pieces:
-
-- `hooks/useCalendarDay.ts` holds today's date as live state (updated on
-  foreground and on a one-minute tick) and keys the selectors. State is what
-  actually forces a re-render — a `new Date()` read during render never would.
-- `hooks/useRefreshOnForeground.ts` invalidates the events query when the app
-  returns to the foreground, and when the calendar day changes while it stays
-  open.
-
-Together they close the gap where an app left open overnight would show
-yesterday's past/today/upcoming classifications.
-
-### Partially-filled content
-
-Most event fields are still `"TODO: ..."` markers. `utils/content.ts` exports
-`resolveContent()`, which returns `null` for a missing, blank, **or
-placeholder** value — every optional field in the UI routes through it. A row
-whose value is still a marker disappears rather than printing it, and the
-component takes its designed fallback path instead:
-
-- **Hero image** — a typographic tile with the event's initials in the serif
-  face over a warm tint, plus its category. Never a broken image, never grey.
-- **Description** (detail only) — "Details are still being finalised. Check
-  back soon."; a detail page with no body copy would read as broken.
-- **Location / time** — the row is omitted entirely.
-
-When real values land, `resolveContent` starts returning them and the same
-components render them with no other change.
+> **Firestore:** the event schema changed in the merge. Re-seed with
+> `npx tsx scripts/seedFirestore.ts`; old-schema documents are skipped with a
+> console warning until then (remove stale ids such as `navratri` by hand).
 
 ### Screens
 
-**Home** — hero header, then the Next Gathering card (`useNextUpcomingEvent`)
-with a date-only countdown, the flagship strip (`useFeaturedEvent`),
-announcements, and a browse-all link. If the flagship event *is* the next
-gathering, only the card renders — no duplicate.
+Three codebases were merged: Ansh's Expo architecture, Maahi's (Base44) look
+and content, and Rahil's (Codex) UI patterns. Tabs: **Home** (Our Community,
+Upcoming Event, Community Notes, Latest Updates, Community Moments gallery),
+**Events** (featured card plus compact rows, detail, all-updates list),
+**Tickets** (Upcoming/Past wallet; empty until registration exists),
+**Members** (dues, renewal form, Youth Corner), **More** (mission, roles,
+meeting minutes, by-laws, Contact form/FAQs/leadership, privacy & help links).
+Every screen opens with `SiteHeader` (logo, wordmark, notifications bell).
 
-**Events** — the whole year as one list from `useEventsWithStatus()`, grouped
-under month headings. Nothing is filtered by date: past events are muted to 60%
-with a "Completed" tag and stay fully tappable, and a month with no events has
-no heading. (An earlier version opened on a month calendar with a "This month /
-All 2026" toggle; it was removed, and `react-native-calendars` with it.)
+From Rahil's app we took only UI: Badge, SegmentedControl, MotionPressable,
+ticket card, compact event row, announcement row, FAQ accordion, the app icon,
+and the privacy/terms links. Login, registration/payments, QR scanning,
+messages, admin web and Cloud Functions were deliberately not ported.
+`hooks/useMyTickets.ts` is the single seam to fill when registration is built.
 
 ### Seed content and TODO markers
 
@@ -241,3 +208,4 @@ grep -rn "TODO:" services/seed/     # 59 markers across the seed files
   (`useYouthItems`, `useResources`).
 - Phase 5: the youth volunteer-hours model replaces `YouthItem`, which is
   deliberately minimal until then (see the TODO on the type).
+# SFVGA
